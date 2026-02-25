@@ -1,0 +1,21 @@
+{
+  "name": "rabbit-hole",
+  "owner": {
+    "name": "BunnyRocks"
+  },
+  "metadata": {
+    "description": "Skills for going deeper down the rabbit hole",
+    "version": "0.1.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "accelerated-learning",
+      "source": "accelerated-learning",
+      "description": "Skills for accelerated learning — Anki cards, translation, research",
+      "version": "0.1.0",
+      "keywords": ["learning", "anki", "flashcards", "translation"],
+      "category": "education"
+    }
+  ]
+}
