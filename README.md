@@ -15,11 +15,25 @@ Supports Claude Code, Codex, and OpenCode.
 
 ### Codex
 
-See [.codex/INSTALL.md](.codex/INSTALL.md).
+Tell Codex:
+
+```
+Fetch and follow instructions from https://raw.githubusercontent.com/BunnyRocks/rabbit-hole/refs/heads/main/.codex/INSTALL.md
+```
+
+**Detailed docs:** [.codex/INSTALL.md](.codex/INSTALL.md).
 
 ### OpenCode
 
-See [.opencode/INSTALL.md](.opencode/INSTALL.md).
+Tell OpenCode:
+
+```
+Fetch and follow instructions from https://raw.githubusercontent.com/BunnyRocks/rabbit-hole/refs/heads/main/.codex/INSTALL.md
+```
+
+**Detailed docs:** [.opencode/INSTALL.md](.opencode/INSTALL.md).
+
+
 
 ## Plugins
 
@@ -27,10 +41,10 @@ See [.opencode/INSTALL.md](.opencode/INSTALL.md).
 
 Skills for accelerated learning workflows.
 
-| Skill | Description |
-|-------|-------------|
-| `creating-anki-cards` | Generate Anki flashcards from course materials (slides, PDFs, lecture notes) |
-| `translate-to-chinese` | Translate documents into Chinese with proper technical term handling |
+| Skill                  | Description                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| `creating-anki-cards`  | Generate Anki flashcards from course materials (slides, PDFs, lecture notes) |
+| `translate-to-chinese` | Translate documents into Chinese with proper technical term handling         |
 
 ## Contributing
 
