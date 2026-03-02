@@ -1,3 +1,27 @@
+# Creating Anki Cards Skill Redesign — Implementation Plan
+
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+
+**Goal:** Rewrite the creating-anki-cards SKILL.md with principles-first structure, new card patterns, and broadened scope.
+
+**Architecture:** Single-file rewrite of `plugins/accelerated-learning/skills/creating-anki-cards/SKILL.md`. No new files, no tooling changes. Content restructure only.
+
+**Tech Stack:** Markdown (SKILL.md format with YAML frontmatter)
+
+**Design doc:** `docs/plans/2026-02-26-creating-anki-cards-redesign.md`
+
+---
+
+### Task 1: Rewrite SKILL.md
+
+**Files:**
+- Modify: `plugins/accelerated-learning/skills/creating-anki-cards/SKILL.md` (full rewrite)
+
+**Step 1: Replace the entire SKILL.md with the restructured content**
+
+Write the following to `plugins/accelerated-learning/skills/creating-anki-cards/SKILL.md`:
+
+````markdown
 ---
 name: creating-anki-cards
 description: Use when creating Anki flashcards from any learning material — course slides, PDFs, books, documentation, articles, or assignments. Use when user mentions Anki, flashcards, spaced repetition, or studying.
@@ -208,3 +232,34 @@ uv run scripts/lecture_N_topic.py --add    # add to Anki (Anki must be CLOSED)
 | Missing tags | Always tag by topic for filtered study sessions |
 | Forgetting `make_tags()` helper | Keeps base tags consistent across all cards in a script |
 | 40+ cards for one source | Be more selective — focus on gotchas, use card count targets |
+````
+
+**Step 2: Validate the plugin**
+
+Run: `claude plugin validate .`
+Expected: Validation passes (the plugin manifest and skill structure are unchanged)
+
+**Step 3: Commit**
+
+```bash
+git add plugins/accelerated-learning/skills/creating-anki-cards/SKILL.md
+git commit -m "feat: redesign creating-anki-cards skill with spaced repetition best practices
+
+Add foundational principles, card patterns (two-way, cloze, hierarchies),
+broadened scope to books/docs/articles, and updated extraction guidelines.
+Based on borretti.me/article/effective-spaced-repetition."
+```
+
+---
+
+### Task 2: Verify and clean up
+
+**Step 1: Read back the committed file to verify structure**
+
+Run: `head -20 plugins/accelerated-learning/skills/creating-anki-cards/SKILL.md`
+Expected: YAML frontmatter with updated description, followed by "# Creating Anki Cards"
+
+**Step 2: Run git log to verify commit**
+
+Run: `git log --oneline -3`
+Expected: Latest commit is the skill redesign
