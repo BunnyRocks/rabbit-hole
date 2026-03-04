@@ -4,7 +4,7 @@ Plugin marketplace for AI coding assistants (Claude Code, Codex, OpenCode).
 
 ## Structure
 
-- `.claude-plugin/marketplace.json` — marketplace manifest (uses `pluginRoot: "./plugins"`)
+- `.claude-plugin/marketplace.json` — marketplace manifest
 - `plugins/<name>/` — each plugin is self-contained with `.claude-plugin/plugin.json` and `skills/`
 - `lib/skills-core.js` — shared utility for SKILL.md parsing
 - `.opencode/plugins/rabbit-hole.js` — OpenCode integration plugin
@@ -17,6 +17,6 @@ Plugin marketplace for AI coding assistants (Claude Code, Codex, OpenCode).
 
 ## Gotchas
 
-- Marketplace `source` paths MUST start with `./` even when `pluginRoot` is set
+- Marketplace `source` paths MUST start with `./` and are relative to the marketplace root
 - Global `~/.gitignore_global` ignores `lib/` — project `.gitignore` has `!lib/` override
 - Skills are auto-discovered by directory structure (SKILL.md files in `plugins/*/skills/*/`)
