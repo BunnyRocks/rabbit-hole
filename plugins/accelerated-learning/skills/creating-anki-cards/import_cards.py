@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["pyyaml"]
+# dependencies = ["pyyaml", "fastanki"]
 # ///
 """Import Anki flashcards from YAML files.
 
@@ -12,6 +12,8 @@ Usage:
 
 import argparse
 import csv
+import os
+import platform
 import sys
 from pathlib import Path
 
@@ -57,10 +59,71 @@ def export_tsv(cards, output=sys.stdout):
         writer.writerow([c["q"], c["a"], " ".join(c["tags"])])
 
 
+def _anki_data_path():
+    """Return the default Anki data folder for this OS."""
+    syst = platform.system()
+    if syst == "Windows":
+        return Path(os.environ["APPDATA"]) / "Anki2"
+    elif syst == "Linux":
+        return Path.home() / ".local" / "share" / "Anki2"
+    else:  # macOS
+        return Path.home() / "Library" / "Application Support" / "Anki2"
+
+
 def add_to_anki(cards, profile="User 1"):
-    """Add cards to Anki with deduplication. (Not yet implemented.)"""
-    print("Error: --add not yet implemented", file=sys.stderr)
-    sys.exit(1)
+    """Add cards to Anki, skipping duplicates based on question text."""
+    import anki._backend
+    from anki.collection import Collection
+
+    # Suppress latency warnings
+    anki._backend.main_thread = lambda: None
+
+    col_path = _anki_data_path() / profile / "collection.anki2"
+    if not col_path.exists():
+        print(f"Error: Anki profile '{profile}' not found at {col_path}", file=sys.stderr)
+        sys.exit(1)
+
+    if not hasattr(Collection, '_backend'):
+        Collection._backend = anki._backend.RustBackend()
+    try:
+        Collection._backend.close_collection(downgrade_to_schema11=False)
+    except Exception:
+        pass
+    col = Collection(str(col_path), backend=Collection._backend)
+
+    try:
+        # Collect existing questions across all target decks
+        decks_seen = set()
+        existing_questions = set()
+        for c in cards:
+            if c["deck"] not in decks_seen:
+                decks_seen.add(c["deck"])
+                note_ids = col.find_notes(f'deck:"{c["deck"]}"')
+                for nid in note_ids:
+                    note = col.get_note(nid)
+                    existing_questions.add(note["Front"])
+
+        added = 0
+        skipped = 0
+        for c in cards:
+            if c["q"] in existing_questions:
+                print(f"  SKIP (duplicate): {c['q'][:60]}")
+                skipped += 1
+                continue
+
+            col.add_deck(c["deck"])
+            note = col.new_note(col.models.by_name("Basic"))
+            note["Front"] = c["q"]
+            note["Back"] = c["a"]
+            note.tags = c["tags"]
+            col.add_note(note, col.decks.id_for_name(c["deck"]))
+            existing_questions.add(c["q"])
+            added += 1
+
+        col.save()
+        print(f"\nAdded: {added}, Skipped (duplicates): {skipped}")
+    finally:
+        col.close()
 
 
 def main():
