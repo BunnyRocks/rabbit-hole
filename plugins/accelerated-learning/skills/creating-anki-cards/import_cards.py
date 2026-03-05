@@ -98,10 +98,16 @@ def add_to_anki(cards, profile="User 1"):
         for c in cards:
             if c["deck"] not in decks_seen:
                 decks_seen.add(c["deck"])
+                col.add_deck(c["deck"])
                 note_ids = col.find_notes(f'deck:"{c["deck"]}"')
                 for nid in note_ids:
                     note = col.get_note(nid)
                     existing_questions.add(note["Front"])
+
+        model = col.models.by_name("Basic")
+        if model is None:
+            print("Error: 'Basic' note type not found in Anki", file=sys.stderr)
+            sys.exit(1)
 
         added = 0
         skipped = 0
@@ -111,12 +117,12 @@ def add_to_anki(cards, profile="User 1"):
                 skipped += 1
                 continue
 
-            col.add_deck(c["deck"])
-            note = col.new_note(col.models.by_name("Basic"))
+            note = col.new_note(model)
             note["Front"] = c["q"]
             note["Back"] = c["a"]
             note.tags = c["tags"]
-            col.add_note(note, col.decks.id_for_name(c["deck"]))
+            deck_id = col.decks.id_for_name(c["deck"])
+            col.add_note(note, deck_id)
             existing_questions.add(c["q"])
             added += 1
 
