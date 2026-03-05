@@ -7,7 +7,7 @@ description: Use when creating Anki flashcards from any learning material — co
 
 ## Overview
 
-Generate high-quality Anki flashcards from learning materials using fastanki. Core principle: **create atomic, interconnected cards that test concepts from multiple angles.** Good cards are small, honest to grade, and build a web of retrieval paths — not isolated facts.
+Generate high-quality Anki flashcards from learning materials as YAML files. Core principle: **create atomic, interconnected cards that test concepts from multiple angles.** Good cards are small, honest to grade, and build a web of retrieval paths — not isolated facts.
 
 ## When to Use
 
@@ -20,14 +20,14 @@ Generate high-quality Anki flashcards from learning materials using fastanki. Co
 ```dot
 digraph anki_workflow {
   "Read source material" -> "Identify card-worthy concepts";
-  "Identify card-worthy concepts" -> "Check for existing project setup";
-  "Check for existing project setup" -> "Has anki_generator.py?" [label="look in scripts/"];
-  "Has anki_generator.py?" -> "Create new card script" [label="yes, reuse it"];
-  "Has anki_generator.py?" -> "Set up project scaffolding" [label="no"];
-  "Set up project scaffolding" -> "Create new card script";
-  "Create new card script" -> "Preview cards";
-  "Preview cards" -> "User reviews" [label="uv run script.py"];
-  "User reviews" -> "Add to Anki" [label="--add (Anki must be closed)"];
+  "Identify card-worthy concepts" -> "Check for existing anki/ directory";
+  "Check for existing anki/ directory" -> "Create anki/ directory" [label="no"];
+  "Check for existing anki/ directory" -> "Check existing YAML files" [label="yes"];
+  "Create anki/ directory" -> "Check existing YAML files";
+  "Check existing YAML files" -> "Generate YAML card file";
+  "Generate YAML card file" -> "Preview cards" [label="uv run import_cards.py *.yaml"];
+  "Preview cards" -> "User reviews";
+  "User reviews" -> "Import to Anki" [label="--add (Anki must be closed, deduplicates)"];
 }
 ```
 
@@ -89,30 +89,16 @@ Prefer bottom-up cards. If a top-down card lists more than 3-4 items, split it o
 
 ### Atomicity Example
 
-```python
+```yaml
 # BAD: Code dump as answer (too much to review)
-Card(
-    "Implement BSTree __contains__ iteratively.",
-    "<pre>def __contains__(self, element):\n"
-    "    node = self.root\n"
-    "    while node is not None:\n"
-    "        if element == node.val:\n"
-    "            return True\n"
-    "        elif element < node.val:\n"
-    "            node = node.left\n"
-    "        else:\n"
-    "            node = node.right\n"
-    "    return False</pre>",
-    make_tags("bstree"),
-)
+- q: "Implement BSTree __contains__ iteratively."
+  a: "<pre>def __contains__(self, element):\n    node = self.root\n    while node is not None:\n        if element == node.val:\n            return True\n        elif element &lt; node.val:\n            node = node.left\n        else:\n            node = node.right\n    return False</pre>"
+  tags: [bstree]
 
 # GOOD: Tests the key insight, not the full implementation
-Card(
-    "BSTree <code>__contains__</code>: where should <code>return False</code> go?",
-    "<b>After</b> the while loop, not inside it. "
-    "Falling off the bottom of the loop means the element wasn't found.",
-    make_tags("bstree", "gotcha"),
-)
+- q: "BSTree <code>__contains__</code>: where should <code>return False</code> go?"
+  a: "<b>After</b> the while loop, not inside it. Falling off the bottom of the loop means the element wasn't found."
+  tags: [bstree, gotcha]
 ```
 
 ## Answer Formatting
@@ -130,7 +116,7 @@ Card(
 **Target: 20-35 cards per lecture**
 
 1. Read the slide file
-2. Check existing card scripts for overlapping topics — don't duplicate cards from earlier lectures
+2. Check existing YAML files in `anki/` for overlapping topics — don't duplicate cards from earlier lectures
 3. Focus on: code examples with non-obvious behavior, comparisons (with/without, before/after), gotchas mentioned in comments
 4. Skip: section headers that are just topic labels, obvious syntax that's common across languages
 5. For PDF slides with annotations: prioritize highlighted/annotated passages, also scan for code examples, comparison tables, warning boxes
@@ -158,42 +144,47 @@ Focus on **tricky implementation spots**, not full solutions:
 
 ## Project Setup
 
-### Existing fastanki Project
+### First Time
+1. Create an `anki/` directory in the project root
+2. This is where all YAML card files will live
 
-If the project already has `scripts/anki_generator.py` (like cis1902), follow its pattern:
+### Adding Cards
+1. Check existing YAML files in `anki/` for overlapping topics — don't duplicate
+2. Create a new YAML file in `anki/` following the format below
 
-```python
-from anki_generator import Card, run
+### YAML Card Format
 
-LECTURE_ID = "lecture_N_topic"
-TAGS = ["course-id", "lectureN", "topic"]
+```yaml
+deck: "Course Name::Topic"
+source: descriptive_source_name
+tags: [course-id, topic-tag]
 
-def make_tags(*extra):
-    return TAGS + list(extra)
-
-cards = [
-    Card("question", "answer", make_tags("subtopic")),
-]
-
-if __name__ == "__main__":
-    run(cards, LECTURE_ID)
+cards:
+  - q: "Question text with <code>inline code</code>?"
+    a: "Answer with <b>key insight</b> highlighted."
+    tags: [subtopic]
+  - q: "Another question?"
+    a: "Another answer."
+    tags: [subtopic, gotcha]
 ```
 
-### New Project
-
-1. Check if `fastanki` is available: `pip show fastanki` or check `pyproject.toml`
-2. If not, add it: `uv add fastanki` (or `pip install fastanki`)
-3. Copy the `anki_generator.py` module from a reference project
-4. Set `DECK` in `anki_generator.py` to the course name (e.g., `"CIS 1902::Python"`)
-5. Use `::` for deck hierarchy (e.g., `"Course::Topic"`)
+- `deck` — Anki deck name, use `::` for hierarchy
+- `source` — identifier for this set of cards (e.g., `lecture_1_basics`)
+- `tags` (file-level) — applied to ALL cards in the file
+- `tags` (per-card) — merged with file-level tags
+- `q`/`a` — question and answer, HTML formatting allowed
 
 ### Running
 
+The import script is bundled with this skill. Replace `<skill-path>` with the actual path to this skill's directory.
+
 ```bash
-uv run scripts/lecture_N_topic.py          # preview in terminal
-uv run scripts/lecture_N_topic.py --tsv    # export TSV for manual import
-uv run scripts/lecture_N_topic.py --add    # add to Anki (Anki must be CLOSED)
+uv run <skill-path>/import_cards.py anki/*.yaml          # preview in terminal
+uv run <skill-path>/import_cards.py anki/*.yaml --tsv    # export TSV for manual import
+uv run <skill-path>/import_cards.py anki/*.yaml --add    # add to Anki (must be CLOSED, deduplicates)
 ```
+
+The `--add` flag automatically skips cards that already exist in Anki (matching on question text), so it's safe to re-run after retries or updates.
 
 ## Common Mistakes
 
@@ -204,7 +195,7 @@ uv run scripts/lecture_N_topic.py --add    # add to Anki (Anki must be CLOSED)
 | Pasting full solutions | Isolate the gotcha — what would someone get wrong? |
 | Only single-direction cards for terminology | Add reverse cards for important terms and notation |
 | Missing cloze cards for sequences/formulas | Use cloze deletions when testing ordered or fill-in-the-blank knowledge |
-| Duplicating earlier material | Check existing card scripts before creating new ones |
+| Duplicating earlier material | Check existing YAML files in anki/ before creating new ones |
 | Missing tags | Always tag by topic for filtered study sessions |
-| Forgetting `make_tags()` helper | Keeps base tags consistent across all cards in a script |
+| Missing file-level tags | Set base tags at file level so per-card tags only need subtopics |
 | 40+ cards for one source | Be more selective — focus on gotchas, use card count targets |
