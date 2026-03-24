@@ -1,12 +1,20 @@
 {
   "name": "accelerated-learning",
   "description": "Skills for accelerated learning",
-  "version": "0.1.0",
   "author": {
     "name": "BunnyRocks"
   },
   "homepage": "https://github.com/BunnyRocks/rabbit-hole",
   "repository": "https://github.com/BunnyRocks/rabbit-hole",
   "license": "MIT",
-  "keywords": ["learning", "anki", "flashcards", "translation", "course", "study", "notes", "obsidian"]
+  "keywords": [
+    "learning",
+    "anki",
+    "flashcards",
+    "translation",
+    "course",
+    "study",
+    "notes",
+    "obsidian"
+  ]
 }
