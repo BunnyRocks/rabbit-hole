@@ -33,19 +33,6 @@ Fetch and follow instructions from https://raw.githubusercontent.com/BunnyRocks/
 
 **Detailed docs:** [.opencode/INSTALL.md](.opencode/INSTALL.md).
 
-
-
-## Plugins
-
-### accelerated-learning
-
-Skills for accelerated learning workflows.
-
-| Skill                  | Description                                                                  |
-| ---------------------- | ---------------------------------------------------------------------------- |
-| `creating-anki-cards`  | Generate Anki flashcards from course materials (slides, PDFs, lecture notes) |
-| `translate-to-chinese` | Translate documents into Chinese with proper technical term handling         |
-
 ## Contributing
 
 Add new skills under `plugins/<plugin-name>/skills/<skill-name>/SKILL.md` and register the plugin in `.claude-plugin/marketplace.json`.
