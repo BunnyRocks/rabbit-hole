@@ -93,12 +93,12 @@ def add_to_anki(cards, profile="User 1"):
 
     try:
         # Collect existing questions across all target decks
-        decks_seen = set()
+        decks_seen = {}
         existing_questions = set()
         for c in cards:
             if c["deck"] not in decks_seen:
-                decks_seen.add(c["deck"])
-                col.decks.id_for_name(c["deck"])
+                deck_id = col.decks.add_normal_deck_with_name(c["deck"]).id
+                decks_seen[c["deck"]] = deck_id
                 note_ids = col.find_notes(f'deck:"{c["deck"]}"')
                 for nid in note_ids:
                     note = col.get_note(nid)
@@ -121,7 +121,7 @@ def add_to_anki(cards, profile="User 1"):
             note["Front"] = c["q"]
             note["Back"] = c["a"]
             note.tags = c["tags"]
-            deck_id = col.decks.id_for_name(c["deck"])
+            deck_id = decks_seen[c["deck"]]
             col.add_note(note, deck_id)
             existing_questions.add(c["q"])
             added += 1
