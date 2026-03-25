@@ -98,7 +98,7 @@ def add_to_anki(cards, profile="User 1"):
         for c in cards:
             if c["deck"] not in decks_seen:
                 decks_seen.add(c["deck"])
-                col.add_deck(c["deck"])
+                col.decks.id_for_name(c["deck"])
                 note_ids = col.find_notes(f'deck:"{c["deck"]}"')
                 for nid in note_ids:
                     note = col.get_note(nid)
@@ -126,7 +126,6 @@ def add_to_anki(cards, profile="User 1"):
             existing_questions.add(c["q"])
             added += 1
 
-        col.save()
         print(f"\nAdded: {added}, Skipped (duplicates): {skipped}")
     finally:
         col.close()
