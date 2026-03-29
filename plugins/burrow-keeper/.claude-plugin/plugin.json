@@ -1,0 +1,19 @@
+{
+  "name": "burrow-keeper",
+  "description": "Skills for routine digital chores and maintenance",
+  "author": {
+    "name": "BunnyRocks"
+  },
+  "homepage": "https://github.com/BunnyRocks/rabbit-hole",
+  "repository": "https://github.com/BunnyRocks/rabbit-hole",
+  "license": "MIT",
+  "keywords": [
+    "chores",
+    "archiving",
+    "youtube",
+    "yt-dlp",
+    "media",
+    "maintenance",
+    "backup"
+  ]
+}

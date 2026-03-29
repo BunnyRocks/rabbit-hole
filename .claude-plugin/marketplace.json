@@ -12,6 +12,12 @@
       "source": "./plugins/accelerated-learning",
       "description": "Skills for accelerated learning",
       "category": "education"
+    },
+    {
+      "name": "burrow-keeper",
+      "source": "./plugins/burrow-keeper",
+      "description": "Skills for routine digital chores and maintenance",
+      "category": "utilities"
     }
   ]
 }
