@@ -1,6 +1,7 @@
 """Shared helpers for cogapp-based README generation."""
 
 import json
+import subprocess
 from pathlib import Path
 
 
@@ -74,3 +75,32 @@ def discover_skills(plugin_dir):
         })
 
     return skills
+
+
+def this_plugin_dir(cog_infile):
+    """Resolve a cog input file path to its plugin directory relative to repo root.
+
+    cog_infile is the value of cog.inFile (e.g. 'plugins/my-plugin/README.md'
+    or an absolute path).
+    """
+    filepath = Path(cog_infile).resolve()
+    root = repo_root()
+    relative = filepath.relative_to(root)
+    # Plugin dir is the first two components: plugins/<name>
+    return str(Path(relative.parts[0]) / relative.parts[1])
+
+
+def github_repo_url():
+    """Derive the GitHub repo URL from git remote origin."""
+    result = subprocess.run(
+        ["git", "remote", "get-url", "origin"],
+        capture_output=True, text=True, timeout=5,
+    )
+    if result.returncode != 0:
+        return ""
+    origin = result.stdout.strip()
+    if origin.startswith("git@github.com:"):
+        origin = origin.replace("git@github.com:", "https://github.com/")
+    if origin.endswith(".git"):
+        origin = origin[:-4]
+    return origin

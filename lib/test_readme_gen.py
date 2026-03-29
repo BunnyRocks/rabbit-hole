@@ -96,3 +96,31 @@ def test_discover_skills_returns_empty_when_no_skills(tmp_path, monkeypatch):
 
     skills = readme_gen.discover_skills("plugins/empty-plugin")
     assert skills == []
+
+
+def test_this_plugin_dir_from_relative_path(tmp_path, monkeypatch):
+    monkeypatch.setattr(readme_gen, "repo_root", lambda: tmp_path)
+    plugin_readme = tmp_path / "plugins" / "my-plugin" / "README.md"
+    plugin_readme.parent.mkdir(parents=True)
+    plugin_readme.touch()
+
+    result = readme_gen.this_plugin_dir(str(plugin_readme))
+    assert result == "plugins/my-plugin"
+
+
+def test_this_plugin_dir_from_absolute_path(tmp_path, monkeypatch):
+    monkeypatch.setattr(readme_gen, "repo_root", lambda: tmp_path)
+    plugin_readme = tmp_path / "plugins" / "deep-plugin" / "README.md"
+    plugin_readme.parent.mkdir(parents=True)
+    plugin_readme.touch()
+
+    result = readme_gen.this_plugin_dir(str(plugin_readme.resolve()))
+    assert result == "plugins/deep-plugin"
+
+
+def test_github_repo_url():
+    # Test against the real repo — this runs inside the rabbit-hole repo
+    url = readme_gen.github_repo_url()
+    assert "github.com" in url
+    assert "rabbit-hole" in url
+    assert not url.endswith(".git")
