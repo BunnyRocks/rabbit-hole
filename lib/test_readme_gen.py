@@ -1,4 +1,5 @@
 import json
+import subprocess
 import readme_gen
 from pathlib import Path
 
@@ -124,3 +125,44 @@ def test_github_repo_url():
     assert "github.com" in url
     assert "rabbit-hole" in url
     assert not url.endswith(".git")
+
+
+def test_get_or_create_summary_returns_cached(tmp_path, monkeypatch):
+    monkeypatch.setattr(readme_gen, "repo_root", lambda: tmp_path)
+    plugin_dir = tmp_path / "plugins" / "cached-plugin"
+    plugin_dir.mkdir(parents=True)
+    (plugin_dir / "_summary.md").write_text("Cached summary paragraph.\n")
+
+    result = readme_gen.get_or_create_summary("plugins/cached-plugin")
+    assert result == "Cached summary paragraph."
+
+
+def test_get_or_create_summary_calls_llm_on_miss(tmp_path, monkeypatch):
+    monkeypatch.setattr(readme_gen, "repo_root", lambda: tmp_path)
+
+    # Create a plugin with a skill but no _summary.md
+    skill_dir = tmp_path / "plugins" / "new-plugin" / "skills" / "my-skill"
+    skill_dir.mkdir(parents=True)
+    (skill_dir / "SKILL.md").write_text("---\nname: my-skill\ndescription: A skill\n---\n\n# Content\n")
+
+    # Mock subprocess.run to fake the llm call
+    original_run = subprocess.run
+
+    def mock_run(cmd, **kwargs):
+        if cmd[0] == "llm":
+            class FakeResult:
+                returncode = 0
+                stdout = "Generated summary.\n"
+                stderr = ""
+            return FakeResult()
+        return original_run(cmd, **kwargs)
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
+
+    result = readme_gen.get_or_create_summary("plugins/new-plugin")
+    assert result == "Generated summary."
+
+    # Verify it was cached
+    cache_file = tmp_path / "plugins" / "new-plugin" / "_summary.md"
+    assert cache_file.exists()
+    assert cache_file.read_text() == "Generated summary.\n"

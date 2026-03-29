@@ -104,3 +104,57 @@ def github_repo_url():
     if origin.endswith(".git"):
         origin = origin[:-4]
     return origin
+
+
+_SUMMARY_PROMPT = (
+    "Summarize this plugin for a marketplace README. "
+    "Write 1 paragraph (3-5 sentences) describing what the plugin does "
+    "and its key skills. Be specific and brief. No emoji."
+)
+
+
+def get_or_create_summary(plugin_dir, model="github/gpt-4.1"):
+    """Return the plugin summary, generating via LLM if not cached.
+
+    Checks for _summary.md in the plugin directory. On cache miss,
+    concatenates all SKILL.md content, pipes to llm CLI, caches result.
+    plugin_dir is relative to repo root.
+    """
+    root = repo_root()
+    cache_path = root / plugin_dir / "_summary.md"
+
+    if cache_path.exists():
+        return cache_path.read_text().strip()
+
+    # Concatenate all SKILL.md content
+    skills_content = []
+    skills_dir = root / plugin_dir / "skills"
+    if skills_dir.is_dir():
+        for entry in sorted(skills_dir.iterdir()):
+            skill_file = entry / "SKILL.md"
+            if skill_file.exists():
+                skills_content.append(skill_file.read_text())
+
+    if not skills_content:
+        summary = "No skills found."
+        cache_path.write_text(summary + "\n")
+        return summary
+
+    combined = "\n\n---\n\n".join(skills_content)
+
+    result = subprocess.run(
+        ["llm", "-m", model, "-s", _SUMMARY_PROMPT],
+        input=combined,
+        capture_output=True, text=True, timeout=60,
+    )
+    if result.returncode != 0:
+        error_msg = f"llm failed for {plugin_dir} (exit {result.returncode})"
+        if result.stderr:
+            error_msg += f"\n{result.stderr}"
+        raise RuntimeError(error_msg)
+    if not result.stdout.strip():
+        raise RuntimeError(f"llm returned no output for {plugin_dir}")
+
+    summary = result.stdout.strip()
+    cache_path.write_text(summary + "\n")
+    return summary
