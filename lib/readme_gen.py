@@ -87,6 +87,8 @@ def this_plugin_dir(cog_infile):
     root = repo_root()
     relative = filepath.relative_to(root)
     # Plugin dir is the first two components: plugins/<name>
+    if len(relative.parts) < 2:
+        raise ValueError(f"Expected path at least 2 levels deep, got: {relative}")
     return str(Path(relative.parts[0]) / relative.parts[1])
 
 
@@ -137,6 +139,7 @@ def get_or_create_summary(plugin_dir, model="github/gpt-4.1"):
 
     if not skills_content:
         summary = "No skills found."
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
         cache_path.write_text(summary + "\n")
         return summary
 
