@@ -48,3 +48,29 @@ def load_plugin_meta(plugin_dir):
     """
     path = repo_root() / plugin_dir / ".claude-plugin" / "plugin.json"
     return json.loads(path.read_text())
+
+
+def discover_skills(plugin_dir):
+    """Find all SKILL.md files under plugins/<name>/skills/*/.
+
+    Returns list of dicts with 'name' and 'description', sorted by name.
+    plugin_dir is relative to repo root.
+    """
+    skills_dir = repo_root() / plugin_dir / "skills"
+    if not skills_dir.is_dir():
+        return []
+
+    skills = []
+    for entry in sorted(skills_dir.iterdir()):
+        if not entry.is_dir():
+            continue
+        skill_file = entry / "SKILL.md"
+        if not skill_file.exists():
+            continue
+        meta = extract_frontmatter(skill_file.read_text())
+        skills.append({
+            "name": meta["name"] or entry.name,
+            "description": meta["description"],
+        })
+
+    return skills
