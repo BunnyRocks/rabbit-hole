@@ -1,0 +1,49 @@
+name: Update READMEs with cogapp
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  models: read
+
+jobs:
+  update-readmes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install tools
+        run: |
+          uv tool install cogapp
+          uv tool install llm --with llm-github-models
+
+      - name: Run cog on all READMEs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cog -r -P -I lib README.md
+          for dir in plugins/*/; do
+            if [ -f "$dir/README.md" ]; then
+              cog -r -P -I lib "$dir/README.md"
+            fi
+          done
+
+      - name: Commit if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add README.md
+          git add plugins/*/README.md 2>/dev/null || true
+          git add plugins/*/_summary.md 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update READMEs [skip ci]"
+            git push
+          fi
