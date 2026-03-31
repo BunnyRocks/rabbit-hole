@@ -42,6 +42,7 @@ digraph anki_workflow {
 ### Two-Way Cards
 
 For any term/concept pair, create cards in both directions:
+
 - Forward: "What does X mean?" / Backward: "What term describes Y?"
 - Forward: "What does `\d+` match?" / Backward: "What regex matches one or more digits?"
 
@@ -50,6 +51,7 @@ Not every card needs a reverse — use two-way for terminology, notation, and de
 ### Cloze Deletions
 
 Hide a key part of a statement and ask the learner to fill it in. Useful for:
+
 - Formulas and syntax patterns: "In Python, `___` creates a shallow copy of a list" → `list.copy()` or `list[:]`
 - Sequences and ordered steps
 - Key phrases in definitions
@@ -59,6 +61,7 @@ Cloze cards work well with the atomicity principle — each deletion tests exact
 ### Hierarchies
 
 For superclass/subclass or category/member relationships, ask both directions:
+
 - Top-down: "What are the subtypes of X?" (use sparingly — these can violate atomicity if the list is long)
 - Bottom-up: "What category does Y belong to?"
 
@@ -77,12 +80,14 @@ Prefer bottom-up cards. If a top-down card lists more than 3-4 items, split it o
 ### What Makes a Card Worth Creating
 
 **DO create cards for:**
+
 - Gotchas and surprising behaviors (e.g., `{}` creates a dict, not a set)
 - Easy-to-confuse pairs (e.g., `append` vs `extend`, `copy` vs `deepcopy`)
 - Syntax you'll forget (e.g., ternary expression order, comprehension syntax)
 - Common mistakes from assignments (e.g., `yield` vs `yield from`)
 
 **DO NOT create cards for:**
+
 - Broad definitions ("What is X?") — unless the definition itself is surprising
 - Content the learner already knows well
 - Every bullet point from the source — be selective
@@ -126,6 +131,7 @@ Prefer bottom-up cards. If a top-down card lists more than 3-4 items, split it o
 **Target: 10-20 cards per assignment**
 
 Focus on **tricky implementation spots**, not full solutions:
+
 - What's the ONE thing a student would get wrong?
 - What's the non-obvious constraint? (e.g., "do this in a single line")
 - What's the gotcha in the data structure or algorithm?
@@ -145,19 +151,33 @@ Focus on **tricky implementation spots**, not full solutions:
 ## Project Setup
 
 ### First Time
+
 1. Create an `anki/` directory in the project root
 2. This is where all YAML card files will live
 
 ### Adding Cards
+
 1. Check existing YAML files in `anki/` for overlapping topics — don't duplicate
 2. Create a new YAML file in `anki/` following the format below
+
+### Deck Naming
+
+**Before creating a new YAML file, always `grep "^deck:" anki/*.yaml | sort -u` to see established naming conventions.** Match the existing pattern.
+
+Derive the deck hierarchy from the source material's context — file path, tags, and calling skill all provide signal:
+
+- Course slides `Lecture 3 — Trees.pdf` → `CS 101::Trees`
+- Book chapter `Chapter 5 — Concurrency.md` → `DDIA::Concurrency`
+- Coding problem `problems/two-sum.md` → `LeetCode::Arrays::Two Sum`
+
+Pattern: `<Domain>::<Category>::<Specific Topic or Problem Name>`. The leaf should be the problem or topic name, not a generic label like "Data Structures."
 
 ### YAML Card Format
 
 ```yaml
-deck: "Course Name::Topic"
-source: descriptive_source_name
-tags: [course-id, topic-tag]
+deck: "CS 101::Binary Trees"
+source: lecture_5_trees
+tags: [cs101, data-structures]
 
 cards:
   - q: "Question text with <code>inline code</code>?"
@@ -168,7 +188,7 @@ cards:
     tags: [subtopic, gotcha]
 ```
 
-- `deck` — Anki deck name, use `::` for hierarchy
+- `deck` — Anki deck name, use `::` for hierarchy (see Deck Naming above)
 - `source` — identifier for this set of cards (e.g., `lecture_1_basics`)
 - `tags` (file-level) — applied to ALL cards in the file
 - `tags` (per-card) — merged with file-level tags
@@ -188,14 +208,15 @@ The `--add` flag automatically skips cards that already exist in Anki (matching 
 
 ## Common Mistakes
 
-| Mistake | Fix |
-|---------|-----|
-| Cards with 10+ line code answers | Split into concept cards; test the insight, not the implementation |
-| "What is X?" for every topic | Only create definition cards when the definition is surprising |
-| Pasting full solutions | Isolate the gotcha — what would someone get wrong? |
-| Only single-direction cards for terminology | Add reverse cards for important terms and notation |
-| Missing cloze cards for sequences/formulas | Use cloze deletions when testing ordered or fill-in-the-blank knowledge |
-| Duplicating earlier material | Check existing YAML files in anki/ before creating new ones |
-| Missing tags | Always tag by topic for filtered study sessions |
-| Missing file-level tags | Set base tags at file level so per-card tags only need subtopics |
-| 40+ cards for one source | Be more selective — focus on gotchas, use card count targets |
+| Mistake                                     | Fix                                                                     |
+| ------------------------------------------- | ----------------------------------------------------------------------- |
+| Cards with 10+ line code answers            | Split into concept cards; test the insight, not the implementation      |
+| "What is X?" for every topic                | Only create definition cards when the definition is surprising          |
+| Pasting full solutions                      | Isolate the gotcha — what would someone get wrong?                      |
+| Only single-direction cards for terminology | Add reverse cards for important terms and notation                      |
+| Missing cloze cards for sequences/formulas  | Use cloze deletions when testing ordered or fill-in-the-blank knowledge |
+| Duplicating earlier material                | Check existing YAML files in anki/ before creating new ones             |
+| Missing tags                                | Always tag by topic for filtered study sessions                         |
+| Missing file-level tags                     | Set base tags at file level so per-card tags only need subtopics        |
+| 40+ cards for one source                    | Be more selective — focus on gotchas, use card count targets            |
+| Generic deck name ("Data Structures")       | Grep existing YAML files for conventions; derive from source file path  |
