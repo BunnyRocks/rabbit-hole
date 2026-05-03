@@ -76,11 +76,12 @@ for plugin in marketplace["plugins"]:
 
 ### [burrow-keeper](https://github.com/BunnyRocks/rabbit-hole/tree/main/plugins/burrow-keeper#readme)
 
-This plugin provides comprehensive guidance for archiving YouTube videos and playlists using yt-dlp, focusing on constructing accurate output templates and selecting optimal download formats. It covers key yt-dlp command patterns, template syntax, variable usage, common flags, and error-prone areas specific to output template construction and playlist handling. Designed as a troubleshooting and reference tool, the plugin helps users avoid common mistakes, supports advanced filename logic, playlist variable handling, and format selection, and provides concise examples for practical archiving workflows. Its main strengths are precise output template documentation, format selection guidance, and detailed flag explanations for efficient YouTube archiving.
+This plugin collects practical maintenance workflows for digital artifacts that benefit from precise command or format reconstruction. It provides yt-dlp guidance for archiving YouTube videos and playlists, with detailed coverage of output templates, playlist variables, format selection, and common command mistakes. It also supports converting rendered SVG flowcharts and Mermaid-like diagram exports back into pasteable Mermaid source while preserving layout direction, node shapes, edge labels, renderer config, and ambiguity notes. Its main strengths are compact references for error-prone syntax and repeatable workflows where guessing creates broken output.
 
 | Skill | Description |
 | ----- | ----------- |
 | `archiving-youtube` | Use when downloading or archiving YouTube videos/playlists with yt-dlp, constructing output templates, selecting formats, or troubleshooting yt-dlp commands |
+| `converting-svg-to-mermaid` | Use when converting SVG flowcharts, diagram exports, or rendered Mermaid-like graphics back into Mermaid source code |
 
 <!--[[[end]]]-->
 
