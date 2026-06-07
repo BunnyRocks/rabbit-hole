@@ -1,13 +1,13 @@
 ---
 name: reading-papers
-description: Use when studying academic papers in the Obsidian vault — user reads a converted markdown paper under private/papers/, discusses it through Keshav's three-pass framework with LLM assistance, and wants annotations added as callouts. Also use when organizing paper notes into PARA topic files.
+description: Use when studying academic papers from a note workspace or source document, discussing them through Keshav's three-pass framework with LLM assistance, and adding study annotations. Also use when organizing paper notes into topic files.
 ---
 
 # Reading Papers
 
 ## Overview
 
-Three-pass study flow for academic papers, based on [Keshav's framework (2007)](https://doi.org/10.1145/1273445.1273458) with LLM assistance at each stage. Papers live as markdown in `private/papers/` (converted via [Marker](https://github.com/datalab-to/marker)). Each pass has a distinct goal, and the user must engage independently before the LLM deepens understanding.
+Three-pass study flow for academic papers, based on [Keshav's framework (2007)](https://doi.org/10.1145/1273445.1273458) with LLM assistance at each stage. Papers can be markdown notes, PDFs, or converted source documents; use the workspace's existing paper storage location and available conversion output. Each pass has a distinct goal, and the user must engage independently before the LLM deepens understanding.
 
 ## Workflow
 
@@ -35,11 +35,11 @@ digraph reading_flow {
   "Adversarial Q&A" -> "Add callouts to paper (deep)";
   "Add callouts to paper (deep)" -> "Done (organize)";
   "Done (organize)" -> "Single topic or multiple?";
-  "Single topic or multiple?" -> "Publish as blogmark" [label="single"];
-  "Single topic or multiple?" -> "PARA topic split" [label="multiple"];
-  "Publish as blogmark" -> "Replace callouts with transclusions";
-  "Replace callouts with transclusions" -> "Update cross-references";
-  "PARA topic split" -> "Delete or slim original";
+  "Single topic or multiple?" -> "Extract to shareable note" [label="single"];
+  "Single topic or multiple?" -> "Topic split" [label="multiple"];
+  "Extract to shareable note" -> "Replace or link annotations if useful";
+  "Replace or link annotations if useful" -> "Update cross-references";
+  "Topic split" -> "Delete or slim original";
 }
 ```
 
@@ -75,7 +75,9 @@ After the user passes the gate:
 3. **Surface key references as described by the paper** — note which works the authors position themselves against or build upon, based on how the paper cites them
 4. **Explicit gate:** "Based on this, is this paper worth a second pass? If it's outside your area or the contributions aren't relevant, it's fine to stop here."
 
-### Callouts for Pass 1
+### Annotations for Pass 1
+
+Use the workspace's annotation syntax. In Obsidian-style workspaces:
 
 - `[!info]` for the 5 C's evaluation
 - `[!warning]` for red flags (questionable assumptions, missing context)
@@ -90,12 +92,14 @@ After the user passes the gate:
 
 1. **No spoilers** — do not preemptively summarize sections the user hasn't asked about. Follow Jeremy Howard's approach: answer what's asked, don't reveal what's ahead.
 2. **Clarify flagged terms and sections** — the user identified unclear parts at the gate. Explain these with references and citations to related work, not just definitions. This is the key acceleration point.
-3. **Walk through figures and diagrams** — trust Marker's conversion. Describe what the LLM can see in the converted output first. Only ask the user for clarification if something appears garbled or missing.
+3. **Walk through figures and diagrams** — describe what the LLM can see in the available source or conversion output first. Only ask the user for clarification if something appears garbled or missing.
 4. **Surface connections as the paper describes them** — when explaining a concept, cite how the paper itself frames its references ("the authors cite X as..."). Add context from training knowledge only when confident, and flag uncertainty explicitly ("I believe this paper is about... but I haven't verified"). Never present inferred knowledge about a reference as fact.
 5. **Mark references for future reading** — flag papers from the bibliography that the paper describes as foundational or that appear frequently in the argument. The user should read key references themselves rather than rely on the LLM's knowledge of them.
 6. **Check comprehension** — after addressing the user's questions, ask them to summarize the main thrust of the paper with supporting evidence (Keshav's bar for pass 2).
 
-### Callouts for Pass 2
+### Annotations for Pass 2
+
+Use the workspace's annotation syntax. In Obsidian-style workspaces:
 
 - `[!question]` for Q&A about unclear terms and concepts
 - `[!info]` for supplementary context, related work, and reference suggestions
@@ -118,7 +122,9 @@ After the user passes the gate:
 3. **Compare with related work** — based on how the paper positions itself against cited work, probe whether the claimed differences hold up. Flag when the LLM lacks knowledge of a referenced paper.
 4. **Identify what's novel vs. incremental** — what's the actual contribution beyond prior work?
 
-### Callouts for Pass 3
+### Annotations for Pass 3
+
+Use the workspace's annotation syntax. In Obsidian-style workspaces:
 
 - `[!question]` for adversarial Q&A exchanges
 - `[!warning]` for identified weaknesses, hidden assumptions
@@ -127,26 +133,28 @@ After the user passes the gate:
 
 ## Phase 4: Organize
 
-Follow the same publish/organize conventions as `studying-articles`:
+Follow the workspace's existing publish and organization conventions.
 
-### Single-topic paper → Blogmark
+### Single-topic paper → Extracted Note
 
-1. Create public blogmark at `content/notes/blogmarks/<filename>.md`
-2. Frontmatter: `tags: [Blogmarks, Papers]`
-3. AI disclosure callout
-4. Replace callouts in private paper with transclusions using folder paths
+1. Create a destination note in the user-selected or workspace-standard notes/publishing location
+2. Apply metadata/tags only when the workspace uses them
+3. Preserve a DOI, source URL, or citation link
+4. Add AI disclosure only when required by the user or publishing policy
+5. If annotations are extracted out of the source note, replace or link them using the workspace's supported reference format
 
-### Multi-topic paper → PARA Split
+### Multi-topic paper → Topic Split
 
-1. Ask user whether to publish as single blogmark or split by topic
-2. Follow reviewing-notes Phase 4 conventions for PARA placement
-3. Each file gets frontmatter, AI disclosure, source link
+1. Ask user whether to keep one extracted note or split by topic
+2. Follow the workspace's existing note organization conventions; if it uses PARA, use the configured PARA folders
+3. Each file gets the workspace's normal metadata, disclosure, and source link when applicable
 4. Handle original per user preference
 
 ### Cross-references
 
-- Public-to-public: wikilinks
-- Public-to-private: external URLs (e.g., DOI links), never wikilinks
+- Use the workspace's supported link format
+- If an extracted note will be public or exported, avoid links to private or local-only notes
+- Prefer DOI, citation, or source URLs for public/exported notes
 
 ## Common Mistakes
 
@@ -158,5 +166,5 @@ Follow the same publish/organize conventions as `studying-articles`:
 | LLM doing the reconstruction for the user in Pass 3 | User walks through the argument; LLM probes and challenges             |
 | Forgetting the 5 C's in Pass 1                      | Always evaluate Category, Context, Correctness, Contributions, Clarity |
 | Not marking unread references                       | Surface key references in Pass 1, mark relevant ones in Pass 2         |
-| Block ID on own line after callout                  | Put `> ^id` on last line inside blockquote                             |
-| Wikilinks from public to private content            | Use DOI or source URLs for private content                             |
+| Assuming Obsidian block IDs always work             | Use block IDs only when supported; otherwise use headings or anchors    |
+| Linking exported notes to private content           | Use DOI, citation, or source URLs for public/exported notes             |

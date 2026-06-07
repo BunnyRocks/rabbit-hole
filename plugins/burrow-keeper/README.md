@@ -24,13 +24,13 @@ if meta.get('keywords'):
 
 Skills for routine digital chores and maintenance
 
-This plugin collects practical maintenance workflows for digital artifacts that benefit from precise command or format reconstruction. It provides yt-dlp guidance for archiving YouTube videos and playlists, localizes external media from private clippings into local assets, and supports converting rendered SVG flowcharts or Mermaid-like diagram exports back into pasteable Mermaid source. Its main strengths are compact references for error-prone syntax, asset-preserving archive workflows, and repeatable maintenance tasks where guessing creates broken output.
+This plugin collects practical maintenance workflows for digital artifacts that benefit from precise command or format reconstruction. It provides yt-dlp guidance for archiving YouTube videos and playlists, localizes external media from notes or clippings into local assets, and supports converting rendered SVG flowcharts or Mermaid-like diagram exports back into pasteable Mermaid source. Its main strengths are compact references for error-prone syntax, asset-preserving archive workflows, and repeatable maintenance tasks where guessing creates broken output.
 
 ## Skills
 
 ### archiving-clipping-media
 
-Use when localizing external media (images, videos, audio) in a private clipping to archive them as local assets. Triggers when user wants to download, archive, or localize media from content/private/clippers/ files.
+Use when localizing external media (images, videos, audio) referenced by a note or clipping so they are archived as local assets.
 
 ### archiving-youtube
 

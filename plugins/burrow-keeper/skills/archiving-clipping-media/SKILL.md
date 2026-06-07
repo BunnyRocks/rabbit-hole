@@ -1,13 +1,13 @@
 ---
 name: archiving-clipping-media
-description: Use when localizing external media (images, videos, audio) in a private clipping to archive them as local assets. Triggers when user wants to download, archive, or localize media from content/private/clippers/ files.
+description: Use when localizing external media (images, videos, audio) referenced by a note or clipping so they are archived as local assets.
 ---
 
 # Archiving Clipping Media
 
 ## Overview
 
-Download external images, videos, and audio from a private clipping into `content/private/assets/`, replacing external URLs with local relative paths. Preserves content for offline studying without publishing third-party media.
+Download external images, videos, and audio referenced by a note into the workspace's local asset directory, replacing external URLs with local paths. Preserve offline access while following the workspace's existing asset and embed conventions.
 
 ## Workflow
 
@@ -27,14 +27,14 @@ Scan for these patterns — handle ALL of them:
 | HTML audio tags        | `<audio src="https://...mp3"></audio>`                     |
 | YouTube/Vimeo embeds   | `![](https://www.youtube.com/watch?v=...)`                 |
 
-**Skip:** wikilinks (`![[...]]`), text hyperlinks, already-local paths (`../assets/...`), `data:` URLs.
+**Skip:** existing local embeds/paths, text hyperlinks, already-local asset paths, `data:` URLs.
 
 ## Download Commands
 
 **Images/direct files:**
 
 ```bash
-curl -L --fail -o "content/private/assets/{filename}" "{url}"
+curl -L --fail -o "{asset_dir}/{filename}" "{url}"
 ```
 
 **YouTube/Vimeo:**
@@ -42,52 +42,54 @@ curl -L --fail -o "content/private/assets/{filename}" "{url}"
 ```bash
 # Get the actual video title first for the filename
 yt-dlp --get-title "{url}"
-yt-dlp --merge-output-format mp4 -o "content/private/assets/{filename}" "{url}"
+yt-dlp --merge-output-format mp4 -o "{asset_dir}/{filename}" "{url}"
 ```
+
+Set `{asset_dir}` to the workspace-configured asset directory. If no asset directory exists, ask before creating one.
 
 **CDN URLs** — try stripped URL first, fall back to original if it 404s:
 
-- Economist: remove `cdn-cgi/image/width=...,quality=...,format=.../` prefix
-- General: strip query params like `?w=600&quality=80`
+- Strip known CDN transformation path segments when safe, such as `cdn-cgi/image/width=...,quality=...,format=.../`
+- Strip query params like `?w=600&quality=80`
 - If the stripped URL fails (404/403), retry with the original CDN URL
 
 ## Filename Convention
 
-**Pattern:** `{article-slug}-{descriptive-name}.{ext}`
+**Pattern:** `{source-slug}-{descriptive-name}.{ext}`
 
-- **article-slug:** kebab-case, first few meaningful words of the title
+- **source-slug:** kebab-case, first few meaningful words of the note/source title
 - **descriptive-name:** from the URL's last path segment or alt text
 - **ext:** preserve original extension; use `.mp4` for yt-dlp downloads
-- Check `content/private/assets/` for collisions before saving
+- Check `{asset_dir}` for collisions before saving
 
-Examples from existing assets: `ane-m4-hero.jpeg`, `ane-software-stack.png`, `rodney-terminal-demo.jpg`
+Neutral examples: `source-title-hero.jpeg`, `source-title-diagram.png`, `source-title-demo.mp4`
 
 ## Replacement Format
 
-**CRITICAL:** Use standard markdown with relative paths. Do NOT use Obsidian wikilink embeds.
+Preserve the workspace's existing embed style. Default to standard Markdown with a relative path computed from the note file to the saved asset when no convention is obvious.
 
 **Images** — preserve any alt text:
 
 ```markdown
-![alt text](../assets/article-slug-name.png)
+![alt text]({relative_asset_path})
 ```
 
-**HTML video tags** — replace entire tag with markdown:
+**HTML video tags** — preserve the workspace's video embed convention. If none exists, use HTML:
 
 ```markdown
-![](../assets/article-slug-video.mp4)
+<video controls src="{relative_asset_path}"></video>
 ```
 
-**HTML audio tags** — replace entire tag with markdown:
+**HTML audio tags** — preserve the workspace's audio embed convention. If none exists, use HTML:
 
 ```markdown
-![](../assets/article-slug-audio.mp3)
+<audio controls src="{relative_asset_path}"></audio>
 ```
 
 **YouTube embeds** — same pattern after yt-dlp download:
 
 ```markdown
-![](../assets/article-slug-video-title.mp4)
+![]({relative_asset_path})
 ```
 
 ## Error Handling
@@ -106,10 +108,10 @@ Examples from existing assets: `ane-m4-hero.jpeg`, `ane-software-stack.png`, `ro
 
 | Mistake                             | Fix                                                                |
 | ----------------------------------- | ------------------------------------------------------------------ |
-| Using `![[wikilink]]` embeds        | Use `![](../assets/...)` relative paths                            |
+| Forcing one embed style             | Preserve the workspace convention; default to Markdown relative paths |
 | Downloading YouTube with curl       | Use `yt-dlp` for YouTube/Vimeo                                     |
 | Keeping CDN params in URL           | Strip transformation params for full quality                       |
 | Missing `<video>` or `<audio>` tags | Scan for markdown `![]()`, HTML `<video>`, AND `<audio>` tags      |
 | Guessing YouTube video filename     | Run `yt-dlp --get-title` first, then derive slug from actual title |
 | CDN-stripped URL 404s               | Try stripped URL first, fall back to original CDN URL              |
-| Generic filenames                   | Prefix with article slug for namespacing                           |
+| Generic filenames                   | Prefix with source slug for namespacing                            |

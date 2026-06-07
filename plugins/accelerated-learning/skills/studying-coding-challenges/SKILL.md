@@ -1,11 +1,11 @@
 ---
 name: studying-coding-challenges
-description: Use when studying coding interview problems in the Obsidian vault — user wants to practice a challenge via mock interview, study existing solutions, or annotate a coding problem note with learning callouts.
+description: Use when studying coding interview problems in a note workspace — user wants to practice a challenge via mock interview, study existing solutions, or annotate a coding problem note.
 ---
 
 # Studying Coding Challenges
 
-Interactive study flow for coding interview problems: confirm reading, run a mock session, annotate with callouts, create retro + Anki cards.
+Interactive study flow for coding interview problems: confirm reading, run a mock session, annotate with the workspace's note format, create retro + Anki cards.
 
 ## Workflow
 
@@ -44,11 +44,11 @@ Play interviewer. User codes; you facilitate and challenge.
 
 ### Setup: Scaffold in Coding Repo
 
-Before the interview starts, set up runnable code in `~/codebase/coding-challenges`:
+Before the interview starts, set up runnable code in the user's configured coding challenge repo. If the repo path is unknown, ask for it.
 
-1. Read the coding-challenges repo's AGENTS.md for conventions (`new.sh`, naming, test structure)
-2. Run `./new.sh <snake_name> "<Problem Name>" <difficulty> <topic>` to scaffold files
-3. Copy starter code from the problem note into `solutions/<snake_name>.py`, preserving the original method names (e.g., keep `addFile` if the starter code uses camelCase — do not convert to snake_case). Only use Pythonic naming when creating problems from scratch.
+1. Read local project instructions if present for conventions, naming, and test structure
+2. Use the repo's existing scaffold command if one exists; otherwise create files following local conventions
+3. Copy starter code from the problem note into the repo's existing solution location and language, preserving original method names and local naming conventions. If no convention is obvious, ask before choosing a path.
 4. Write tests that demonstrate the bug/expected behavior:
    - Tests for correct behavior (should pass once fixed)
    - Tests that expose the specific bugs (should fail with buggy starter code)
@@ -86,12 +86,12 @@ Run this after **each coding part** and again after discussion questions — not
 
 ### 2a: Annotate Problem Note (metadata only)
 
-The problem note stays as a **clean problem spec** — only add metadata callouts:
+The problem note stays as a **clean problem spec** — only add metadata annotations:
 
-- AI disclosure after frontmatter: `> [!info] AI-assisted annotations` (once, on first session)
-- `> [!info] See also` for alternate versions or related notes
+- AI disclosure after frontmatter, in the workspace's normal format, if required (once, on first session)
+- See-also annotation for alternate versions or related notes
 
-Do NOT add study callouts or user solutions to the problem note. Those go in the mock session doc (2b).
+Do NOT add study annotations or user solutions to the problem note. Those go in the mock session doc (2b).
 
 ### 2b: Create/Update Mock Session Retro
 
@@ -106,19 +106,19 @@ Create a retro note in the **same folder** as the problem note:
   - Would I pass this in an interview? (Yes/Probably/No)
   - Discussion log (clarifying Qs, approach, key decisions)
   - Iteration history (each attempt with what failed and why)
-  - Study callouts placed **contextually after the relevant part** they relate to:
+  - Study annotations placed **contextually after the relevant part** they relate to:
     - `[!question]` conceptual Q&A, `[!warning]` gotchas/bugs, `[!info]` context/patterns, `[!example]` worked examples
-    - One concept per callout, `==highlights==` for takeaways, no tables inside callouts
+    - Use Obsidian callouts and highlights when supported; otherwise use plain Markdown headings, blockquotes, bullets, or bold text
 - **Discussion questions** get their own section with bullet summaries
 - **`## My Solution`** at the end — user's final code for all parts
 
-### 2c: Update Coding Retro Journal
+### 2c: Update Coding Retro or Journal
 
-Find the Coding Retro Journal in the Interview Preparation folder. Add an entry following its template format, with a wikilink to the full mock session retro note.
+Find the user's coding retro or journal location. If none exists, create or update a retro note near the session note. Link to the full mock session retro using the workspace's link convention.
 
 ### 2d: Create Anki Cards
 
-Invoke the `accelerated-learning:creating-anki-cards` skill to create flashcards from the session. Cards go in the project's `anki/` directory. Focus on:
+Invoke the `accelerated-learning:creating-anki-cards` skill to create flashcards from the session. Use the workspace's existing Anki/card output location; ask before creating a new one. Focus on:
 
 - Gotchas and mistakes made during the session
 - Key insights and patterns
@@ -133,7 +133,7 @@ For "talk only" sections in the problem note:
 1. Ask each question, let user discuss
 2. Push back, probe deeper, ask follow-ups
 3. Share insights the user missed
-4. After all questions: wrap up with callouts on the problem note, retro entries, and Anki cards
+4. After all questions: wrap up with annotations, retro entries, and Anki cards
 
 ## Phase 4: Quiz (Optional)
 
@@ -146,12 +146,12 @@ For "talk only" sections in the problem note:
 | Giving away the solution                 | Ask leading questions, don't state answers                                                                                                                            |
 | Writing code for the user                | Use TODO(human) + Learn by Doing                                                                                                                                      |
 | Skipping clarifying questions            | Redirect: "What would you ask first?"                                                                                                                                 |
-| Callouts in problem note                 | Callouts go in mock session doc, contextually after the relevant part. Problem note stays as clean spec                                                               |
-| Callouts grouped at end                  | Place after relevant part in mock session doc, not lumped into one section                                                                                            |
+| Study annotations in problem note        | Study annotations go in mock session doc, contextually after the relevant part. Problem note stays as clean spec                                                      |
+| Annotations grouped at end               | Place after relevant part in mock session doc, not lumped into one section                                                                                            |
 | Coding "discussion only" questions       | Honor the note's labels                                                                                                                                               |
-| Missing AI disclosure                    | Always add after frontmatter                                                                                                                                          |
+| Missing AI disclosure policy             | Follow the workspace's disclosure convention when the session note is substantially AI-assisted                                                                        |
 | Summarizing problem back                 | They've read it — jump to engagement                                                                                                                                  |
-| No runnable tests                        | Always scaffold in coding repo with failing tests                                                                                                                     |
+| No runnable tests                        | Use the configured coding repo or ask for one, then create failing tests                                                                                               |
 | Wrapping up only at the end              | Wrap up after each coding part and after discussion                                                                                                                   |
 | Skipping retro/Anki                      | Always create retro note, update journal, and create Anki cards                                                                                                       |
 | Prescribing design decisions             | Let user choose format/approach; test behavior not implementation                                                                                                     |

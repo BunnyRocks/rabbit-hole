@@ -1,6 +1,6 @@
 ---
 name: studying-system-design-challenges
-description: Use when studying system design interview problems in the Obsidian vault — user wants to run a mock system design interview, study a reference design, or annotate a system design question note with learning callouts.
+description: Use when studying system design interview problems in a note workspace — user wants to run a mock system design interview, study a reference design, or annotate a system design question note.
 ---
 
 # Studying System Design Challenges
@@ -17,23 +17,23 @@ digraph setup {
   node [shape=box];
 
   start [label="Skill invoked" shape=ellipse];
-  ask_path [label="AskUserQuestion:\nQuestion doc path?" shape=box];
+  ask_path [label="Ask user:\nQuestion doc path?" shape=box];
   check_path [label="Is it a directory\nor a file?" shape=diamond];
   list_dir [label="Glob *.md in directory\n(skip index files)" shape=box];
   dir_empty [label="Any questions\nfound?" shape=diamond];
-  ask_pick [label="AskUserQuestion:\nWhich question?" shape=box];
+  ask_pick [label="Ask user:\nWhich question?" shape=box];
   load [label="Read the question file" shape=box];
   file_exists [label="File exists?" shape=diamond];
   check_format [label="Has question file\nformat sections?" shape=diamond];
   gen_structure [label="Generate missing sections\nas internal reference\n(Requirements, Design, etc.)" shape=box];
-  ask_mode [label="AskUserQuestion:\nMock or Study?" shape=box];
+  ask_mode [label="Ask user:\nMock or Study?" shape=box];
   mock_branch [label="Mock branch" shape=ellipse];
   study_branch [label="Study branch" shape=ellipse];
-  ask_submode [label="AskUserQuestion:\nCoaching or Simulation?" shape=box];
-  ask_time_mock [label="AskUserQuestion:\nTime target? (default 45 min)" shape=box];
-  ask_time_study [label="AskUserQuestion:\nTime target? (default 30 min)" shape=box];
-  ask_doc_mock [label="AskUserQuestion:\nWorking doc?\npaste path / scaffold md|canvas|excalidraw\n(default markdown)" shape=box];
-  ask_doc_study [label="AskUserQuestion:\nOptional working doc?\nyes/no, then same path/scaffold prompt" shape=box];
+  ask_submode [label="Ask user:\nCoaching or Simulation?" shape=box];
+  ask_time_mock [label="Ask user:\nTime target? (default 45 min)" shape=box];
+  ask_time_study [label="Ask user:\nTime target? (default 30 min)" shape=box];
+  ask_doc_mock [label="Ask user:\nWorking doc?\npaste path / scaffold md|canvas|excalidraw\n(default markdown)" shape=box];
+  ask_doc_study [label="Ask user:\nOptional working doc?\nyes/no, then same path/scaffold prompt" shape=box];
   scaffold [label="If scaffold:\ncreate <Question Name> - Working <YYYY-MM-DD>.<ext>\nin question's folder" shape=box];
   begin [label="Begin session" shape=ellipse];
 
@@ -66,8 +66,8 @@ digraph setup {
 
 When invoked:
 
-1. **Which question?** Use AskUserQuestion to ask for the path to a question document. The user can:
-   - Provide a path to a specific `.md` file anywhere in the vault
+1. **Which question?** Ask for the path to a question document. The user can:
+   - Provide a path to a specific `.md` file anywhere in the note workspace or filesystem
    - Provide a path to a directory to list questions from — glob for `*.md` files, exclude index files, session retros (`- Mock Session`, `- Study Session`), working docs (`- Working`), and companion docs (`- Question`, `- Reference`), then ask which one
    - **If the directory is empty** (no `.md` question files), inform the user and re-ask
    - **If the file doesn't exist**, inform the user and re-ask
@@ -76,7 +76,7 @@ When invoked:
 4. **Time target?** Default 45 min for mock, 30 min for study
 5. **Working doc?** Ask the user:
    - `paste path` — provide a path to an existing `.md`, `.canvas`, or `.excalidraw.md` file
-   - `scaffold` — choose `markdown` (default), `canvas`, or `excalidraw`. The skill creates `<Question Name> - Working <YYYY-MM-DD>.<ext>` in the same folder as the question file via the Obsidian CLI.
+   - `scaffold` — choose `markdown` (default), `canvas`, or `excalidraw`. The skill creates `<Question Name> - Working <YYYY-MM-DD>.<ext>` in the same folder as the question file using the workspace-native note operation when configured; otherwise use normal filesystem operations.
    - In **study mode**, this question is prefaced with "Want a doc to sketch as we discuss? (yes/no)" — `no` skips it.
 
 Read the selected question file. If the file follows the question file format (has `## Requirements`, `## High-Level Design`, etc.), proceed directly. If it's an ad-hoc source (notes, articles, clippings), **generate the missing structure first** — silently create internal reference sections (Requirements, Back-of-Envelope, High-Level Design, Deep Dive Topics, Wrap-Up Prompts, Common Mistakes) based on the file's content and your own domain knowledge. Then begin the session using this generated structure as your reference.
@@ -100,17 +100,17 @@ Do NOT re-read the doc on every candidate turn. The defaults above are sufficien
 
 | Format                        | How you read it                                                                                                                                                                                                                  |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Markdown (`.md`)              | Read the file directly with the Read tool. Cheap; the full content is plain text.                                                                                                                                                |
+| Markdown (`.md`)              | Read the file directly with the available file-reading capability. Cheap; the full content is plain text.                                                                                                                        |
 | Canvas (`.canvas`)            | Read the file as JSON. Extract `nodes[]` (boxes with `text` / `file` properties) and `edges[]` (`fromNode` → `toNode` connections). Reason about layout from coordinates only when needed.                                       |
-| Excalidraw (`.excalidraw.md`) | **Default:** Read the file and locate the `## Text Elements` section maintained by the Obsidian Excalidraw plugin. This gives you every text label without spatial info.                                                         |
-|                               | **At step transitions and on request:** Prompt the candidate: "Go ahead and export the diagram so I can take a look — `Cmd+P` → Export PNG, save it as `<same-basename>.png` in the same folder." Then read the PNG with vision. |
+| Excalidraw (`.excalidraw.md`) | **Default:** If text elements are available, read them to capture labels without spatial info.                                                                                                                                   |
+|                               | **At step transitions and on request:** Ask the candidate to export the diagram as an image using their editor's export command, save it as `<same-basename>.png` in the same folder, then read the PNG with vision.              |
 |                               | **Fallback:** If the PNG is missing, stale, or the candidate skips export, fall back to labels-only and disclose: "I can see your labels but not the spatial layout — walk me through the connections."                          |
 
 ### Doc Path Convention
 
 - Scaffolded path: `<Question Name> - Working <YYYY-MM-DD>.<ext>` in the same folder as the question file.
 - PNG export path (Excalidraw only): same folder, same basename, `.png` extension.
-- Use the Obsidian CLI for create / move / rename / delete to keep the link graph healthy.
+- Use workspace-native note operations for create / move / rename / delete when configured; otherwise use normal filesystem operations and preserve links where possible.
 
 ## Mock Mode
 
@@ -269,7 +269,7 @@ Walk the Reference doc's sections in this order, pausing at each:
 3. **Each Deep Dive Topic** — "Walk me through the tradeoff. What would push you the other way?"
 4. **Wrap-Up Prompts (failure scenarios)** — "How does this design degrade under [scenario]?"
 
-For each section: ==let the candidate attempt the answer first, then share what the reference says, then probe alternatives==.
+For each section: **let the candidate attempt the answer first, then share what the reference says, then probe alternatives**.
 
 The Working Doc is **optional** in study mode — useful if the candidate wants to sketch comparisons mid-discussion. Same read cadence rules apply.
 
@@ -327,7 +327,7 @@ Score each dimension 1-4:
 
 ## Question File Format
 
-Question files can live anywhere in the vault. Each question file follows this structure:
+Question files can live anywhere in the workspace. Each question file follows this structure:
 
 ```markdown
 # Question Name
@@ -371,20 +371,20 @@ If a Working Doc was used during the session, ask the candidate:
 
 > "Working doc — keep / discard / rename?"
 
-- `keep` — leave it in the question's folder. The session retro (2b) wikilinks to it.
-- `discard` — delete via the Obsidian CLI (`obsidian delete vault=content path="..."`). The retro records the choice ("Working doc discarded") but does not wikilink.
-- `rename` — ask for the new name, move via `obsidian move` (or `obsidian rename` for in-place rename). The retro wikilinks to the renamed file.
+- `keep` — leave it in the question's folder. The session retro (2b) links to it using the workspace's link convention.
+- `discard` — delete using the workspace's configured note/file operation. The retro records the choice ("Working doc discarded") but does not link it.
+- `rename` — ask for the new name, move or rename using the workspace's configured note/file operation. The retro links to the renamed file using the workspace's link convention.
 
 If no working doc was used, skip this step.
 
 ### 2a: Annotate Question File (metadata only)
 
-The question file stays as a **clean problem spec** — only add metadata callouts:
+The question file stays as a **clean problem spec** — only add metadata annotations:
 
-- AI disclosure after frontmatter: `> [!info] AI-assisted annotations` (once, on first session)
-- `> [!info] See also` for alternate versions or related notes
+- AI disclosure after frontmatter, in the workspace's normal format, if required (once, on first session)
+- See-also annotation for alternate versions or related notes
 
-Do NOT add retro content, study callouts, or evaluation scores to the question file. Those go in the session retro (2b).
+Do NOT add retro content, study annotations, or evaluation scores to the question file. Those go in the session retro (2b).
 
 ### 2b: Create/Update Session Retro
 
@@ -394,12 +394,12 @@ Create a retro note in the **same folder** as the question file. The retro struc
 
 - **Filename:** `<Question Name> - Mock Session <YYYY-MM-DD>.md`
 - **Structure:**
-  - Setup block (question wikilink, mode = `mock`, sub-mode = `coaching` | `simulation`, time target, date, working-doc wikilink if kept/renamed)
+  - Setup block (question link, mode = `mock`, sub-mode = `coaching` | `simulation`, time target, date, working-doc link if kept/renamed)
   - Per-step sections with:
     - What the candidate said/did
-    - Study callouts placed **contextually after the relevant step** they relate to:
+    - Study annotations placed **contextually after the relevant step** they relate to:
       - `[!question]` conceptual Q&A and key insights, `[!warning]` gotchas/mistakes, `[!info]` context/patterns, `[!example]` strong points
-      - One concept per callout, `==highlights==` for takeaways, no tables inside callouts
+      - Use Obsidian callouts and highlights when supported; otherwise use plain Markdown headings, blockquotes, bullets, or bold text
   - Evaluation summary table (dimension, score, notes)
   - Priority areas for next session
   - Comparison to previous sessions (if any exist — check for prior mock session files)
@@ -408,12 +408,12 @@ Create a retro note in the **same folder** as the question file. The retro struc
 
 - **Filename:** `<Question Name> - Study Session <YYYY-MM-DD>.md`
 - **Structure:**
-  - Setup block (question wikilink, mode = `study`, time target, date, working-doc wikilink if kept/renamed, reference-doc wikilink)
+  - Setup block (question link, mode = `study`, time target, date, working-doc link if kept/renamed, reference-doc link)
   - Per-section notes (Requirements / HLD / Deep Dive Topics / Wrap-Up Prompts):
     - What the candidate attempted
     - What the reference added
     - Alternatives discussed
-  - Study callouts placed **contextually after the relevant section** (same callout types as mock mode)
+  - Study annotations placed **contextually after the relevant section** (same annotation types as mock mode)
   - Key insights to remember
   - Comparison to prior sessions for this question (if any exist)
   - **No** evaluation rubric, **no** hire decision
@@ -422,13 +422,13 @@ If prior session retros exist in the same folder, use them as format reference.
 
 ### 2c: Update System Design Retro Journal
 
-Find the System Design Retro Journal in the Interview Preparation folder. If it doesn't exist, create it (modeled on Coding Retro Journal). Add an entry following its template format, including a `mode: mock | study` field, with a wikilink to the full session retro note.
+Find the user's system design retro or journal location. If none exists, create or update a retro note near the session note. Add an entry following the local template when one exists, including a `mode: mock | study` field, with a link to the full session retro note using the workspace's link convention.
 
-Also update the **Weak Pattern Summary** table at the bottom — patterns that recur across sessions get flagged here. Mock-mode and study-mode patterns can share rows when they touch the same weakness.
+If the local retro or journal has a recurring-pattern summary section or table, update it. Otherwise, add pattern notes using the journal's existing structure. Mock-mode and study-mode patterns can share rows when they touch the same weakness.
 
 ### 2d: Create Anki Cards
 
-Invoke the `accelerated-learning:creating-anki-cards` skill to create flashcards from the session. Cards go in the project's `anki/` directory. Deck naming convention: `"Interview Prep::System Design::<Topic>"`.
+Invoke the `accelerated-learning:creating-anki-cards` skill to create flashcards from the session. Use the workspace's existing Anki/card output location and deck naming convention; ask before creating new locations or deck hierarchies.
 
 **Mock mode focus:**
 
@@ -460,9 +460,9 @@ If the question source was ad-hoc (user-provided notes, not already in question 
    - Detailed reference answers for each deep dive topic
    - **Mermaid diagrams** for visual study: architecture overview, sequence diagrams for key flows, data model (ER diagram), and any component-specific diagrams (e.g., version control strategy, cost control layers, streaming flow)
    - Tables comparing approaches and tradeoffs
-   - Wikilink back to the question file: `Companion to [[<question-file>]]`
-4. Save both files in the **same folder as the source question** using the Obsidian CLI. Name them to match the source file's naming style (e.g., if source is `Prompt Playground System Design.md`, use `Prompt Playground - Question.md` and `Prompt Playground - Reference.md`)
-5. If a System Design Questions index file exists in or near the source folder, update it with wikilinks to both the question file and reference doc
+   - Link back to the question file using the workspace's link convention, e.g. `Companion to <question link>`
+4. Save both files in the **same folder as the source question** using the workspace's configured note/file operation, or normal filesystem operations when none is configured. Name them to match the source file's naming style (e.g., if source is `Prompt Playground System Design.md`, use `Prompt Playground - Question.md` and `Prompt Playground - Reference.md`)
+5. If a system design question index file exists in or near the source folder, update it with links to both the question file and reference doc using the workspace's link convention
 
 ## Red Flags (Across All Steps)
 

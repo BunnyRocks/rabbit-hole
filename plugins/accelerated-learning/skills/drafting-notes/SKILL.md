@@ -1,22 +1,22 @@
 ---
 name: drafting-notes
-description: Use when the user wants to create a new note in the Obsidian vault — short write-ups, tips, how-tos, or any original content. Also use when user says "create a note about...", "write up...", or "I want to jot down...".
+description: Use when the user wants to create a new note in a note workspace — short write-ups, tips, how-tos, or original content. Also use when user says "create a note about...", "write up...", or "I want to jot down...".
 ---
 
 # Drafting Notes
 
 ## Overview
 
-Help the user draft new original notes for the Quartz vault. The core principle: **preserve the user's voice**. You are a scribe, not an editor.
+Help the user draft new original notes for the target note workspace. The core principle: **preserve the user's voice**. You are a scribe, not an editor.
 
 ## Workflow
 
 ```dot
 digraph drafting {
-  "User describes note" -> "Ask: public or private?";
-  "Ask: public or private?" -> "Read 2-3 existing notes in target folder";
-  "Read 2-3 existing notes in target folder" -> "Decide placement (PARA first)";
-  "Decide placement (PARA first)" -> "Draft note in user's voice";
+  "User describes note" -> "Clarify placement if needed";
+  "Clarify placement if needed" -> "Read 2-3 existing notes in target folder";
+  "Read 2-3 existing notes in target folder" -> "Decide placement from local conventions";
+  "Decide placement from local conventions" -> "Draft note in user's voice";
   "Draft note in user's voice" -> "Present draft to user";
   "Present draft to user" -> "ESL proofing pass";
   "ESL proofing pass" -> "Apply changes if accepted";
@@ -25,15 +25,16 @@ digraph drafting {
 
 ## Step 1: Clarify Placement
 
-Ask **one question**: public or private?
+Ask **one placement question only if needed**. Examples: published/shared/private, target collection, course folder, project, or topic area.
 
 Do NOT ask about tags, formatting, or other metadata — match what existing notes in the target folder do.
 
 ### Folder Decision
 
-1. **PARA first** — Check if the topic fits an existing area under `content/notes/areas/` (public) or `content/private/areas/` (private). If yes, place there.
-2. **Fallback** — Only use top-level `content/notes/` (public) or a private collection folder like `content/private/books/`, `content/private/writings/` if no PARA area fits.
-3. **Never assume blogmark** — Blogmarks annotate external content with `tags: [Blogmarks]`. If the user is writing original content (even referencing external docs), it's NOT a blogmark.
+1. **Inspect first** — Look at the workspace's existing folders and naming conventions before choosing a path.
+2. **Prefer the closest local convention** — If the workspace uses PARA, place the note in the relevant project, area, or resource folder. Otherwise use the closest topic, course, project, collection, or inbox convention.
+3. **Ask before inventing structure** — If no destination is obvious, propose one or two paths and ask the user to choose.
+4. **Never assume bookmark/link-post taxonomy** — Do not classify original notes as bookmarks, link posts, or external-source annotations unless the user asks or the workspace already has that convention.
 
 ## Step 2: Read Before Writing
 
@@ -77,15 +78,15 @@ After the user confirms the content, always offer language suggestions:
 
 ## AI Disclosure
 
-Drafted notes do NOT need the `[!info] AI-assisted annotations` callout — the user is the author, you're just formatting. Only add it if the AI substantially rewrites or generates original content beyond what the user provided.
+Drafted notes do not need AI disclosure unless the AI substantially rewrites or generates original content beyond what the user provided. When disclosure is needed, use the workspace's normal disclosure format.
 
 ## Common Mistakes
 
 | Mistake                                        | Fix                                                                          |
 | ---------------------------------------------- | ---------------------------------------------------------------------------- |
 | Over-formalizing user's voice                  | Use their words. "It took some digging" not "The documentation is scattered" |
-| Placing in notes/ without considering PARA     | Check areas/ first                                                           |
+| Placing in a generic notes folder too early    | Check the workspace's established organization first                         |
 | Adding explanatory content user didn't provide | Only write what they told you                                                |
-| Asking too many questions upfront              | Just ask public or private                                                   |
+| Asking too many questions upfront              | Ask only the placement question needed to choose the target folder           |
 | Skipping ESL proofing                          | Always offer, even if writing looks fine                                     |
-| Using blogmark tags for original content       | Blogmarks annotate external articles, not original notes                     |
+| Using bookmark tags for original content       | Only use bookmark/link-post taxonomy when the workspace already does         |

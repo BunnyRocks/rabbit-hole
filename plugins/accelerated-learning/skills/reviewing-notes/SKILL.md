@@ -1,13 +1,13 @@
 ---
 name: reviewing-notes
-description: Use when reviewing existing notes against their source material, identifying gaps, drilling into topics via discussion, and reorganizing notes into PARA model structure. Also use when user wants to break up a monolithic note into topic-based files.
+description: Use when reviewing existing notes against source material, identifying gaps, drilling into topics via discussion, and reorganizing notes according to the workspace's structure. Also use when user wants to break up a monolithic note into topic-based files.
 ---
 
 # Reviewing and Organizing Notes
 
 ## Overview
 
-Review existing notes against source material, discuss and annotate topics, then reorganize into PARA-appropriate topic files. Complements studying-articles (which starts from new clippings); this skill starts from **existing notes** that need refinement.
+Review existing notes against source material, discuss and annotate topics, then reorganize into topic files that match the workspace's structure. Complements studying-articles (which starts from new source notes); this skill starts from **existing notes** that need refinement.
 
 ## Workflow
 
@@ -19,9 +19,9 @@ digraph review_flow {
   "Discuss and annotate" -> "More topics?" [label="add callouts"];
   "More topics?" -> "User picks topics" [label="yes"];
   "More topics?" -> "Reorganize into sections" [label="done"];
-  "Reorganize into sections" -> "User requests PARA split?";
-  "User requests PARA split?" -> "Split into topic files" [label="yes"];
-  "User requests PARA split?" -> "Done" [label="no"];
+  "Reorganize into sections" -> "User requests topic split?";
+  "User requests topic split?" -> "Split into topic files" [label="yes"];
+  "User requests topic split?" -> "Done" [label="no"];
   "Split into topic files" -> "Delete or slim original";
 }
 ```
@@ -39,7 +39,7 @@ digraph review_flow {
 
 ## Phase 2: Discuss and Annotate
 
-Follow studying-articles callout conventions:
+Use the workspace's existing annotation convention. In Obsidian-style workspaces, use callouts:
 
 | Type          | Use for                 |
 | ------------- | ----------------------- |
@@ -50,11 +50,13 @@ Follow studying-articles callout conventions:
 
 **Rules:**
 
-- Place callouts contextually after relevant content, not grouped at end
-- One concept per callout, self-contained
-- Use `==highlights==` for key takeaways
-- No tables inside callouts
+- Place annotations contextually after relevant content, not grouped at end
+- One concept per annotation, self-contained
+- Use the workspace's highlight syntax for key takeaways; otherwise use bold or bullet points
+- No tables inside callouts when using Obsidian callouts
 - Match the language the user is writing in
+
+If the workspace does not support callouts, use plain Markdown headings, blockquotes, or bullet sections.
 
 ## Phase 3: Reorganize into Sections
 
@@ -67,20 +69,16 @@ When the user is done drilling into topics:
 
 **Naming sections:** Use the user's language and framing. If notes are in Chinese, headers should be in Chinese (with English term in parentheses if helpful).
 
-## Phase 4: PARA Split
+## Phase 4: Topic Split
 
 When the user requests breaking into separate notes:
 
 1. **Propose file mapping** — show a table of: topic → proposed file path → rationale
 2. **Wait for user confirmation** before creating files
-3. **PARA placement guide:**
-   - `projects/` — tied to a specific short-term effort with a deadline
-   - `areas/` — ongoing responsibility (self-improvement, economics, etc.)
-   - `resources/` — reference material organized by topic, not tied to a project or area
-   - `archive/` — inactive or outdated
+3. **Placement guide:** Use the workspace's existing folder taxonomy. If it uses PARA, map projects, areas, resources, and archive accordingly. If it uses another structure, follow that structure. If none is obvious, propose destination paths and ask the user to confirm.
 4. **Each new file gets:**
-   - Frontmatter with tags inherited from original note
-   - AI disclosure callout: `> [!info] AI-assisted annotations` with brief description of what was helped and model info
+   - Metadata inherited from the original note when the workspace uses metadata
+   - AI disclosure in the workspace's normal format if required by user or publishing policy
    - Source link to the original article/podcast
    - Only the content relevant to its topic
 5. **Handle the original note** per user preference:
@@ -97,6 +95,6 @@ When the user requests breaking into separate notes:
 | Adding content without user direction          | Present gaps, let user choose what to explore                                                    |
 | Reorganizing before discussion is done         | Complete annotation phase first                                                                  |
 | Creating files without showing the plan        | Always propose file mapping and wait for confirmation                                            |
-| Forcing content into PARA when user didn't ask | Reorganizing into sections and PARA split are separate steps                                     |
+| Forcing content into a taxonomy when user didn't ask | Reorganizing into sections and splitting into topic files are separate steps              |
 | Mixing languages inconsistently                | Match the user's language in commentary and headers                                              |
-| Forgetting AI disclosure callout               | Every new or substantially edited note needs `[!info] AI-assisted annotations` after frontmatter |
+| Forgetting AI disclosure policy                | Follow the workspace's AI disclosure convention when notes are substantially AI-assisted         |
