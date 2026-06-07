@@ -38,7 +38,7 @@ Use when the user wants to create a new note in a note workspace — short write
 
 ### extracting-apkg
 
-Use when needing to read, extract, inspect, or convert Anki .apkg deck files — triggered by .apkg file paths, "Anki deck", "flashcard export", or requests to view card content
+Use when needing to read, extract, or inspect Anki .apkg deck files — triggered by .apkg file paths, "Anki deck", "flashcard export", or requests to view card content
 
 ### reading-papers
 

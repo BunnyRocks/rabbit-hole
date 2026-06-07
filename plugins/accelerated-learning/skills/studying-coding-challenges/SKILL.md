@@ -124,7 +124,7 @@ Invoke the `accelerated-learning:creating-anki-cards` skill to create flashcards
 - Key insights and patterns
 - Discussion question takeaways (for discussion parts)
 
-Check existing YAML files to avoid duplicates; add to existing file if the topic already has one.
+Check existing card files or exports in the workspace's card format to avoid duplicates; add to the existing topic file or deck if one already exists.
 
 ## Phase 3: Discussion Questions
 

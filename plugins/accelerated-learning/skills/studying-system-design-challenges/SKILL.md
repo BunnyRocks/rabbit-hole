@@ -445,7 +445,7 @@ Invoke the `accelerated-learning:creating-anki-cards` skill to create flashcards
 - Numbers from estimation and what they imply for component choice
 - Patterns that generalize beyond this specific question
 
-Check existing YAML files to avoid duplicates; add to existing file if the topic already has one.
+Check existing card files or exports in the workspace's card format to avoid duplicates; add to the existing topic file or deck if one already exists.
 
 ### 2e: Save Question File (ad-hoc sources only)
 

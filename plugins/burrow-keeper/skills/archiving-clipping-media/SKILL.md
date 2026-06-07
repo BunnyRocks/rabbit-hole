@@ -13,8 +13,8 @@ Download external images, videos, and audio referenced by a note into the worksp
 
 1. Read the clipping file
 2. Scan for all external media links (see Detection below)
-3. For each link: download, save with proper filename, replace URL
-4. Verify all downloads succeeded
+3. For each link: download to a temporary path, verify success, then move to the final filename
+4. Replace URLs only after the downloader exits 0 and the final file is non-empty
 
 ## Media Detection
 
@@ -47,6 +47,8 @@ yt-dlp --merge-output-format mp4 -o "{asset_dir}/{filename}" "{url}"
 
 Set `{asset_dir}` to the workspace-configured asset directory. If no asset directory exists, ask before creating one.
 
+**Rewrite gate:** Do not edit the note immediately after starting a download. Replace the original URL only after the command exits successfully and `test -s "{asset_dir}/{filename}"` confirms a non-empty file. On failure, remove any partial file and leave the original link intact.
+
 **CDN URLs** — try stripped URL first, fall back to original if it 404s:
 
 - Strip known CDN transformation path segments when safe, such as `cdn-cgi/image/width=...,quality=...,format=.../`
@@ -60,6 +62,7 @@ Set `{asset_dir}` to the workspace-configured asset directory. If no asset direc
 - **source-slug:** kebab-case, first few meaningful words of the note/source title
 - **descriptive-name:** from the URL's last path segment or alt text
 - **ext:** preserve original extension; use `.mp4` for yt-dlp downloads
+- **sanitize:** keep filenames to safe characters such as letters, digits, `.`, `_`, and `-`
 - Check `{asset_dir}` for collisions before saving
 
 Neutral examples: `source-title-hero.jpeg`, `source-title-diagram.png`, `source-title-demo.mp4`
@@ -94,15 +97,18 @@ Preserve the workspace's existing embed style. Default to standard Markdown with
 
 ## Error Handling
 
-- **404/failed download:** report and leave original link intact
+- **404/failed download:** remove any partial file, report the failure, and leave original link intact
+- **yt-dlp failure:** report the failure, remove any partial output, and leave original embed/link intact
+- **Login walls / HTML downloads:** if the saved file is HTML or the wrong MIME type, treat it as failed and leave the original link intact
 - **Large files (>50MB):** report size, ask user before keeping
 - **Duplicate URLs:** download once, replace all occurrences
 
 ## Post-Download
 
 1. `ls -lh` each downloaded file to verify non-empty
-2. Read modified clipping to confirm replacements
-3. Report summary: downloaded count, failed count, total size
+2. Check MIME type when possible (`file --mime-type`) before replacing source URLs
+3. Read modified clipping to confirm replacements
+4. Report summary: downloaded count, failed count, total size
 
 ## Common Mistakes
 

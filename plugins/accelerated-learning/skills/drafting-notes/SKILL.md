@@ -25,7 +25,7 @@ digraph drafting {
 
 ## Step 1: Clarify Placement
 
-Ask **one placement question only if needed**. Examples: published/shared/private, target collection, course folder, project, or topic area.
+Ask **one placement question only if needed**. Examples: visibility, target collection, course folder, project, or topic area, if the workspace uses those distinctions.
 
 Do NOT ask about tags, formatting, or other metadata — match what existing notes in the target folder do.
 
@@ -40,7 +40,7 @@ Do NOT ask about tags, formatting, or other metadata — match what existing not
 
 Read 2-3 existing notes in the target folder to match:
 
-- Frontmatter style (usually just `created: YYYY-MM-DD`)
+- Metadata or header style, if the target folder uses one
 - Tone and structure
 - Heading conventions
 
@@ -55,9 +55,11 @@ Read 2-3 existing notes in the target folder to match:
 - Do NOT add context, background, or "helpful" elaboration
 - Keep it the length the user indicated ("short note" = short note)
 
-### Frontmatter
+### Metadata
 
-Match existing notes in the target folder. Default to:
+Match existing notes in the target folder. Only add YAML frontmatter when the target workspace uses it; otherwise use the existing header or metadata convention.
+
+Example when local notes already use minimal YAML frontmatter:
 
 ```yaml
 ---
@@ -65,7 +67,7 @@ created: YYYY-MM-DD
 ---
 ```
 
-Only add `tags:` if there's a clear convention in the folder.
+Only add fields such as `created:` or `tags:` if there's a clear convention in the folder.
 
 ## Step 4: ESL Proofing
 

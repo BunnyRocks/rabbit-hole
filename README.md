@@ -69,7 +69,7 @@ This plugin collects study and knowledge-work workflows for turning source mater
 | ----- | ----------- |
 | `creating-anki-cards` | Use when creating Anki flashcards from any learning material — course slides, PDFs, books, documentation, articles, or assignments. Use when user mentions Anki, flashcards, spaced repetition, or studying. |
 | `drafting-notes` | Use when the user wants to create a new note in a note workspace — short write-ups, tips, how-tos, or original content. Also use when user says "create a note about...", "write up...", or "I want to jot down...". |
-| `extracting-apkg` | Use when needing to read, extract, inspect, or convert Anki .apkg deck files — triggered by .apkg file paths, "Anki deck", "flashcard export", or requests to view card content |
+| `extracting-apkg` | Use when needing to read, extract, or inspect Anki .apkg deck files — triggered by .apkg file paths, "Anki deck", "flashcard export", or requests to view card content |
 | `reading-papers` | Use when studying academic papers from a note workspace or source document, discussing them through Keshav's three-pass framework with LLM assistance, and adding study annotations. Also use when organizing paper notes into topic files. |
 | `reviewing-notes` | Use when reviewing existing notes against source material, identifying gaps, drilling into topics via discussion, and reorganizing notes according to the workspace's structure. Also use when user wants to break up a monolithic note into topic-based files. |
 | `studying-articles` | Use when studying blog posts, articles, clippings, or saved source notes in a note workspace — user asks questions, discusses ideas, and wants annotations added or extracted. |

@@ -1,6 +1,6 @@
 ---
 name: extracting-apkg
-description: Use when needing to read, extract, inspect, or convert Anki .apkg deck files — triggered by .apkg file paths, "Anki deck", "flashcard export", or requests to view card content
+description: Use when needing to read, extract, or inspect Anki .apkg deck files — triggered by .apkg file paths, "Anki deck", "flashcard export", or requests to view card content
 ---
 
 # Extracting Anki .apkg Content
@@ -13,13 +13,14 @@ An `.apkg` file is a **ZIP archive** containing a SQLite database and optional m
 
 ```
 .apkg (ZIP)
-├── collection.anki2    # SQLite database (cards, notes, metadata)
+├── collection.anki21   # SQLite database in newer exports, when present
+├── collection.anki2    # SQLite database in older exports, when present
 └── media               # JSON map: {"0": "image.jpg", ...} or {}
 ```
 
 **Key tables:**
 
-- `col` — collection metadata; `models` JSON has field names, `decks` JSON has deck names
+- `col` — collection metadata; legacy `models` JSON has field names, legacy `decks` JSON has deck names
 - `notes` — card content in `flds` column, fields separated by `\x1f` (ASCII unit separator)
 - `cards` — links notes to decks with scheduling data
 
@@ -32,20 +33,43 @@ Use this Python script — handles unzip, SQLite query, HTML stripping, and meta
 ```python
 import sqlite3, html, re, json, tempfile, zipfile, sys, os
 
+if len(sys.argv) < 2:
+    print('Usage: python3 extract_apkg.py /path/to/deck.apkg [output.txt]', file=sys.stderr)
+    sys.exit(2)
+
 apkg_path = sys.argv[1]
 output_path = sys.argv[2] if len(sys.argv) > 2 else None
+
+def find_collection_db(tmpdir):
+    for db_name in ('collection.anki21', 'collection.anki2'):
+        db_path = os.path.join(tmpdir, db_name)
+        if os.path.exists(db_path):
+            return db_name, db_path
+    raise RuntimeError('No collection.anki21 or collection.anki2 found in .apkg')
+
+def load_required_json(value, label):
+    data = json.loads(value or '{}')
+    if not data:
+        raise RuntimeError(
+            f'Unsupported Anki schema: col.{label} is empty. '
+            'This quick extractor supports legacy .apkg metadata stored in col.models/col.decks. '
+            'Modern exports may store this data in separate tables; re-export with legacy support or extend the script for that schema.'
+        )
+    return data
 
 with tempfile.TemporaryDirectory() as tmpdir:
     with zipfile.ZipFile(apkg_path, 'r') as z:
         z.extractall(tmpdir)
 
-    db_name = 'collection.anki21' if os.path.exists(os.path.join(tmpdir, 'collection.anki21')) else 'collection.anki2'
-    conn = sqlite3.connect(os.path.join(tmpdir, db_name))
+    db_name, db_path = find_collection_db(tmpdir)
+    conn = sqlite3.connect(f'file:{db_path}?mode=ro', uri=True)
 
     # Get deck name and field names from metadata
     col = conn.execute('SELECT models, decks FROM col').fetchone()
-    models = json.loads(col[0])
-    decks = json.loads(col[1])
+    if not col:
+        raise RuntimeError('Collection metadata row not found in col table')
+    models = load_required_json(col[0], 'models')
+    decks = load_required_json(col[1], 'decks')
     deck_name = next((d['name'] for d in decks.values() if d['name'] != 'Default'), 'Unknown')
     # Build model lookup: model_id -> field names
     models_by_id = {mid: [f['name'] for f in m['flds']] for mid, m in models.items()}
@@ -86,7 +110,9 @@ output.append('')
 
 for i, (mid, flds) in enumerate(rows, 1):
     parts = flds.split('\x1f')
-    field_names = models_by_id.get(str(mid), ['Front', 'Back'])
+    field_names = models_by_id.get(str(mid))
+    if not field_names:
+        raise RuntimeError(f'Missing field metadata for note model {mid}')
     output.append('=' * 60)
     output.append(f'Card {i}')
     output.append('=' * 60)
@@ -119,7 +145,8 @@ You can also run the script inline via `python3 -c "..."` with the apkg path har
 
 ## Edge Cases
 
-- **`collection.anki21` vs `collection.anki2`**: Newer Anki versions use `.anki21`. Script checks both.
+- **`collection.anki21` vs `collection.anki2`**: Newer Anki versions may use `.anki21`. Script checks both filenames.
+- **Modern schema exports**: Some `.anki21` exports store note type and deck metadata outside `col.models` / `col.decks`. This quick extractor detects that case and fails loudly instead of labeling every card as `Front` / `Back`.
 - **Media files**: The `media` JSON maps numeric keys to filenames. Media files are stored in the ZIP with numeric names (e.g., `0`, `1`). If media exists, note it in output and offer to extract.
 - **Multiple models**: Some decks mix card types (Basic, Cloze, etc.). Each model has different field names. For multi-model decks, group output by model.
 - **Cloze deletions**: Content may contain `{{c1::answer::hint}}` syntax. Preserve as-is in extraction — the user can decide how to render.
@@ -132,4 +159,5 @@ You can also run the script inline via `python3 -c "..."` with the apkg path har
 | Using `\n` as field separator   | Fields use `\x1f` (unit separator), not newline                     |
 | Forgetting HTML in card content | Always strip HTML — even "plain" cards have `<br>` tags             |
 | Ignoring `collection.anki21`    | Check for both `.anki2` and `.anki21` variants                      |
+| Assuming every `.anki21` has legacy metadata | Fail loudly when `col.models` / `col.decks` are empty instead of guessing field names |
 | Not reading `col.models`        | Field names come from models metadata, not hardcoded "Front"/"Back" |

@@ -1,11 +1,11 @@
 # rabbit-hole
 
-Plugin marketplace for AI coding assistants (Codex, Codex, OpenCode).
+Plugin marketplace for AI coding assistants (Claude Code, Codex, OpenCode).
 
 ## Structure
 
-- `.Codex-plugin/marketplace.json` — marketplace manifest
-- `plugins/<name>/` — each plugin is self-contained with `.Codex-plugin/plugin.json` and `skills/`
+- `.claude-plugin/marketplace.json` — marketplace manifest
+- `plugins/<name>/` — each plugin is self-contained with `.claude-plugin/plugin.json` and `skills/`
 - `lib/skills-core.js` — shared utility for SKILL.md parsing (JS)
 - `lib/readme_gen.py` — shared helpers for cogapp-based README generation (Python)
 - `.opencode/plugins/rabbit-hole.js` — OpenCode integration plugin
@@ -14,7 +14,7 @@ Plugin marketplace for AI coding assistants (Codex, Codex, OpenCode).
 ## Commands
 
 - `node --test lib/skills-core.test.js` — run tests (Node built-in runner, ES modules)
-- `Codex plugin validate .` — validate marketplace manifest (run after any manifest change)
+- `claude plugin validate .` — validate marketplace manifest (run after any manifest change)
 - `uv run --with pytest pytest lib/test_readme_gen.py -v` — run Python tests
 - `uvx --from cogapp cog -r -P -I lib README.md` — regenerate root README (requires `llm` with `llm-github-models`)
 - `for dir in plugins/*/; do uvx --from cogapp cog -r -P -I lib "$dir/README.md"; done` — regenerate plugin READMEs
