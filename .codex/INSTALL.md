@@ -18,7 +18,6 @@ Codex natively reads SKILL.md files. Just clone and symlink.
    mkdir -p ~/.agents/skills
    ln -s ~/.codex/rabbit-hole/plugins/accelerated-learning/skills ~/.agents/skills/accelerated-learning
    ln -s ~/.codex/rabbit-hole/plugins/burrow-keeper/skills ~/.agents/skills/burrow-keeper
-   ln -s ~/.codex/rabbit-hole/plugins/quartz/skills ~/.agents/skills/quartz
    ```
 
 3. **Restart Codex** to discover the skills.
@@ -34,6 +33,5 @@ cd ~/.codex/rabbit-hole && git pull
 ```bash
 rm ~/.agents/skills/accelerated-learning
 rm ~/.agents/skills/burrow-keeper
-rm ~/.agents/skills/quartz
 rm -rf ~/.codex/rabbit-hole
 ```

@@ -18,12 +18,6 @@
       "source": "./plugins/burrow-keeper",
       "description": "Skills for routine digital chores and maintenance",
       "category": "utilities"
-    },
-    {
-      "name": "quartz",
-      "source": "./plugins/quartz",
-      "description": "Skills for Obsidian and Quartz knowledge workflows",
-      "category": "education"
     }
   ]
 }
