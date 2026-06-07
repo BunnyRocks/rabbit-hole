@@ -24,9 +24,13 @@ if meta.get('keywords'):
 
 Skills for routine digital chores and maintenance
 
-This plugin collects practical maintenance workflows for digital artifacts that benefit from precise command or format reconstruction. It provides yt-dlp guidance for archiving YouTube videos and playlists, with detailed coverage of output templates, playlist variables, format selection, and common command mistakes. It also supports converting rendered SVG flowcharts and Mermaid-like diagram exports back into pasteable Mermaid source while preserving layout direction, node shapes, edge labels, renderer config, and ambiguity notes. Its main strengths are compact references for error-prone syntax and repeatable workflows where guessing creates broken output.
+This plugin collects practical maintenance workflows for digital artifacts that benefit from precise command or format reconstruction. It provides yt-dlp guidance for archiving YouTube videos and playlists, localizes external media from notes or clippings into local assets, and supports converting rendered SVG flowcharts or Mermaid-like diagram exports back into pasteable Mermaid source. Its main strengths are compact references for error-prone syntax, asset-preserving archive workflows, and repeatable maintenance tasks where guessing creates broken output.
 
 ## Skills
+
+### archiving-clipping-media
+
+Use when localizing external media (images, videos, audio) referenced by a note or clipping so they are archived as local assets.
 
 ### archiving-youtube
 
@@ -40,5 +44,5 @@ Use when converting SVG flowcharts, diagram exports, or rendered Mermaid-like gr
 
 - **Author:** BunnyRocks
 - **License:** MIT
-- **Keywords:** chores, archiving, youtube, yt-dlp, svg, mermaid, diagrams, flowcharts, media, maintenance, backup
+- **Keywords:** chores, archiving, youtube, yt-dlp, clippings, svg, mermaid, diagrams, flowcharts, media, maintenance, backup
 <!--[[[end]]]-->

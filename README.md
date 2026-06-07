@@ -11,6 +11,7 @@ Supports Claude Code, Codex, and OpenCode.
 ```shell
 /plugin marketplace add BunnyRocks/rabbit-hole
 /plugin install accelerated-learning@rabbit-hole
+/plugin install burrow-keeper@rabbit-hole
 ```
 
 ### Codex
@@ -28,7 +29,7 @@ Fetch and follow instructions from https://raw.githubusercontent.com/BunnyRocks/
 Tell OpenCode:
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/BunnyRocks/rabbit-hole/refs/heads/main/.codex/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/BunnyRocks/rabbit-hole/refs/heads/main/.opencode/INSTALL.md
 ```
 
 **Detailed docs:** [.opencode/INSTALL.md](.opencode/INSTALL.md).
@@ -62,24 +63,28 @@ for plugin in marketplace["plugins"]:
 
 ### [accelerated-learning](https://github.com/BunnyRocks/rabbit-hole/tree/main/plugins/accelerated-learning#readme)
 
-**Creating Anki Cards** is a plugin that generates high-quality, atomic flashcards from any learning material—course slides, PDFs, books, documentation, articles, or assignments—organized as YAML files for seamless import into Anki. It identifies card-worthy concepts, focuses on tricky points, and builds interconnected retrieval paths by supporting two-way cards, cloze deletions, and hierarchy-based questions. The plugin enforces best practices: concise cards, selective redundancy, robust tagging, and avoidance of content duplication, ensuring cards are honest to grade and easy to review. Integration tools preview, export, and deduplicate card imports into Anki, making the process efficient and reliable for spaced repetition study.
-
-**Studying Course Materials** parses course content (PDF slides, markdown notes, or website links) into structured markdown notes and enriches them with simulated lecture-style interactive Q&A. Users can request clarification or ask questions about material, with answers formatted as Obsidian callouts—question, example, info, or warning—contextually placed for later review or easy conversion to Anki cards. The plugin supports hierarchical note structuring, provides supplementary context, and helps users bridge gaps left by passive reading, yielding narrative notes ideal for both studying and card extraction.
-
-**Translate to Chinese** is a document translation plugin for converting any Markdown text into fluent, readable Chinese while meticulously preserving original meaning, technical terms, and structure. It cleans up formatting issues (like footnotes and line breaks), performs a complete, word-for-word translation, and adds technical terms in both languages for clarity. All frontmatter fields are retained, "Translations" is added to tags, and the plugin appends the translated filename (in Chinese with kebab-case) to the source folder. A link back to the original document and an editing attribution footnote are included for provenance and traceability.
+This plugin collects study and knowledge-work workflows for turning source material into durable notes, flashcards, annotations, and practice artifacts. It covers Anki card generation and `.apkg` inspection, structured course-material study, Chinese translation, academic-paper and article reading, note drafting and review, and interview preparation for coding and system design challenges. Its skills emphasize source-grounded understanding, concise retrieval practice, workspace-native annotation formats, local organization conventions, and follow-up artifacts such as retrospectives and Anki cards.
 
 | Skill | Description |
 | ----- | ----------- |
 | `creating-anki-cards` | Use when creating Anki flashcards from any learning material — course slides, PDFs, books, documentation, articles, or assignments. Use when user mentions Anki, flashcards, spaced repetition, or studying. |
+| `drafting-notes` | Use when the user wants to create a new note in a note workspace — short write-ups, tips, how-tos, or original content. Also use when user says "create a note about...", "write up...", or "I want to jot down...". |
+| `extracting-apkg` | Use when needing to read, extract, or inspect Anki .apkg deck files — triggered by .apkg file paths, "Anki deck", "flashcard export", or requests to view card content |
+| `reading-papers` | Use when studying academic papers from a note workspace or source document, discussing them through Keshav's three-pass framework with LLM assistance, and adding study annotations. Also use when organizing paper notes into topic files. |
+| `reviewing-notes` | Use when reviewing existing notes against source material, identifying gaps, drilling into topics via discussion, and reorganizing notes according to the workspace's structure. Also use when user wants to break up a monolithic note into topic-based files. |
+| `studying-articles` | Use when studying blog posts, articles, clippings, or saved source notes in a note workspace — user asks questions, discusses ideas, and wants annotations added or extracted. |
+| `studying-coding-challenges` | Use when studying coding interview problems in a note workspace — user wants to practice a challenge via mock interview, study existing solutions, or annotate a coding problem note. |
 | `studying-course-materials` | Use when studying course materials (PDF slides, markdown notes, or website links) without access to lectures. Use when user provides course material and wants structured notes, interactive Q&A on the content, or Obsidian callouts from discussion. |
+| `studying-system-design-challenges` | Use when studying system design interview problems in a note workspace — user wants to run a mock system design interview, study a reference design, or annotate a system design question note. |
 | `translate-to-chinese` | Use when translate a document into Chinese |
 
 ### [burrow-keeper](https://github.com/BunnyRocks/rabbit-hole/tree/main/plugins/burrow-keeper#readme)
 
-This plugin collects practical maintenance workflows for digital artifacts that benefit from precise command or format reconstruction. It provides yt-dlp guidance for archiving YouTube videos and playlists, with detailed coverage of output templates, playlist variables, format selection, and common command mistakes. It also supports converting rendered SVG flowcharts and Mermaid-like diagram exports back into pasteable Mermaid source while preserving layout direction, node shapes, edge labels, renderer config, and ambiguity notes. Its main strengths are compact references for error-prone syntax and repeatable workflows where guessing creates broken output.
+This plugin collects practical maintenance workflows for digital artifacts that benefit from precise command or format reconstruction. It provides yt-dlp guidance for archiving YouTube videos and playlists, localizes external media from notes or clippings into local assets, and supports converting rendered SVG flowcharts or Mermaid-like diagram exports back into pasteable Mermaid source. Its main strengths are compact references for error-prone syntax, asset-preserving archive workflows, and repeatable maintenance tasks where guessing creates broken output.
 
 | Skill | Description |
 | ----- | ----------- |
+| `archiving-clipping-media` | Use when localizing external media (images, videos, audio) referenced by a note or clipping so they are archived as local assets. |
 | `archiving-youtube` | Use when downloading or archiving YouTube videos/playlists with yt-dlp, constructing output templates, selecting formats, or troubleshooting yt-dlp commands |
 | `converting-svg-to-mermaid` | Use when converting SVG flowcharts, diagram exports, or rendered Mermaid-like graphics back into Mermaid source code |
 
