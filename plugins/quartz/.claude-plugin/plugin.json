@@ -1,0 +1,22 @@
+{
+  "name": "quartz",
+  "description": "Skills for Obsidian and Quartz knowledge workflows",
+  "author": {
+    "name": "BunnyRocks"
+  },
+  "homepage": "https://github.com/BunnyRocks/rabbit-hole",
+  "repository": "https://github.com/BunnyRocks/rabbit-hole",
+  "license": "MIT",
+  "keywords": [
+    "quartz",
+    "obsidian",
+    "notes",
+    "papers",
+    "articles",
+    "clippings",
+    "anki",
+    "study",
+    "interviews",
+    "media"
+  ]
+}

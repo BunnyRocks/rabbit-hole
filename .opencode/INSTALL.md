@@ -22,6 +22,8 @@
    ```bash
    mkdir -p ~/.config/opencode/skills
    ln -s ~/.config/opencode/rabbit-hole/plugins/accelerated-learning/skills ~/.config/opencode/skills/accelerated-learning
+   ln -s ~/.config/opencode/rabbit-hole/plugins/burrow-keeper/skills ~/.config/opencode/skills/burrow-keeper
+   ln -s ~/.config/opencode/rabbit-hole/plugins/quartz/skills ~/.config/opencode/skills/quartz
    ```
 
 4. **Restart OpenCode.**
@@ -37,5 +39,7 @@ cd ~/.config/opencode/rabbit-hole && git pull
 ```bash
 rm ~/.config/opencode/plugins/rabbit-hole.js
 rm ~/.config/opencode/skills/accelerated-learning
+rm ~/.config/opencode/skills/burrow-keeper
+rm ~/.config/opencode/skills/quartz
 rm -rf ~/.config/opencode/rabbit-hole
 ```

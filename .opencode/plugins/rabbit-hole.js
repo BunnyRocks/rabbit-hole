@@ -1,7 +1,7 @@
 /**
  * rabbit-hole plugin for OpenCode.ai
  *
- * Lists available skills from the accelerated-learning plugin
+ * Lists available skills from rabbit-hole plugins
  * and injects discovery context via system prompt transform.
  */
 
